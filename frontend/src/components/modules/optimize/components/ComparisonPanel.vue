@@ -1,7 +1,9 @@
 <template>
-  <div class="h-full min-h-0 overflow-hidden" :class="comparisonMode === 'system' ? 'flex flex-col' : 'grid grid-cols-2 gap-4'">
+  <div class="h-full min-h-0 overflow-hidden flex flex-col">
+    <!-- 上部：两个对话窗口 -->
+    <div class="flex-1 min-h-0 grid grid-cols-2 gap-4 mb-4">
     <!-- 左侧：优化前 -->
-    <div v-if="comparisonMode === 'user'" class="flex flex-col bg-white rounded-lg shadow-sm overflow-hidden">
+    <div class="flex flex-col bg-white rounded-lg shadow-sm overflow-hidden">
       <!-- 头部 -->
       <div class="p-4 border-b border-gray-200 flex-shrink-0">
         <div class="flex justify-between items-center">
@@ -97,15 +99,15 @@
           
           <div class="flex-1 flex flex-col min-h-0">
             <!-- 对话历史 -->
-            <div class="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
-              <div v-if="leftUserMessages.length === 0" class="flex items-center justify-center h-full text-gray-400">
+            <div ref="leftChatContainer" class="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
+              <div v-if="(comparisonMode === 'system' ? leftMessages : leftUserMessages).length === 0" class="flex items-center justify-center h-full text-gray-400">
                 <div class="text-center">
                   <MessageSquare class="w-12 h-12 mx-auto mb-2 opacity-50" />
                   <p class="text-sm">暂无对话</p>
                 </div>
               </div>
               <div
-                v-for="msg in leftUserMessages"
+                v-for="msg in (comparisonMode === 'system' ? leftMessages : leftUserMessages)"
                 :key="msg.id"
                 class="flex group"
                 :class="msg.role === 'user' ? 'justify-end' : 'justify-start'"
@@ -167,7 +169,7 @@
         </div>
 
     <!-- 右侧：优化后 -->
-    <div v-if="comparisonMode === 'user'" class="flex flex-col bg-white rounded-lg shadow-sm overflow-hidden">
+    <div class="flex flex-col bg-white rounded-lg shadow-sm overflow-hidden">
       <!-- 头部 -->
           <div class="p-4 border-b border-gray-200 flex-shrink-0">
             <div class="flex justify-between items-center">
@@ -264,15 +266,15 @@
           
       <div class="flex-1 flex flex-col min-h-0">
         <!-- 对话历史 -->
-        <div class="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
-          <div v-if="rightUserMessages.length === 0" class="flex items-center justify-center h-full text-gray-400">
+        <div ref="rightChatContainer" class="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
+          <div v-if="(comparisonMode === 'system' ? rightMessages : rightUserMessages).length === 0" class="flex items-center justify-center h-full text-gray-400">
             <div class="text-center">
               <MessageSquare class="w-12 h-12 mx-auto mb-2 opacity-50" />
               <p class="text-sm">暂无对话</p>
             </div>
           </div>
           <div
-            v-for="msg in rightUserMessages"
+            v-for="msg in (comparisonMode === 'system' ? rightMessages : rightUserMessages)"
             :key="msg.id"
             class="flex group"
             :class="msg.role === 'user' ? 'justify-end' : 'justify-start'"
@@ -332,9 +334,13 @@
             </div>
           </div>
     </div>
-
-    <!-- 系统模式：底部共用输入框 -->
-    <div v-if="comparisonMode === 'system'" class="mt-6 bg-white rounded-lg shadow-md border border-gray-200 p-3">
+    </div>
+    
+    <!-- 下部：输入框区域 -->
+    <div class="flex-shrink-0">
+      <!-- 用户模式：左右各自的输入框已经在上面的对话窗口内 -->
+      <!-- 系统模式：底部共用输入框 -->
+      <div v-if="comparisonMode === 'system'" class="bg-white rounded-lg shadow-md border border-gray-200 p-3">
       <div 
         class="relative border border-gray-300 rounded-2xl focus-within:outline-none focus-within:border-gray-300 overflow-hidden" 
         style="height: 120px;"
@@ -363,6 +369,7 @@
           </button>
         </div>
       </div>
+      </div>
     </div>
     
     <!-- 系统提示词模态框 - 左侧 -->
@@ -386,7 +393,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { MessageSquare, ArrowLeft, RefreshCw, ArrowUp, FileText } from 'lucide-vue-next'
 import { useComparison } from '../composables/useComparison'
 import { marked } from 'marked'
@@ -395,6 +402,10 @@ import { useSettingsStore } from '@/stores/settingsStore'
 
 const comparison = useComparison()
 const settingsStore = useSettingsStore()
+
+// 对话容器引用
+const leftChatContainer = ref<HTMLElement | null>(null)
+const rightChatContainer = ref<HTMLElement | null>(null)
 
 // 本地状态
 const comparisonMode = ref<'system' | 'user'>('user')
@@ -788,6 +799,56 @@ const handleBack = () => {
   // 通过设置标志触发 OptimizeModule 切换回优化模式
   localStorage.setItem('yprompt_back_to_optimize', 'true')
 }
+
+// 自动滚动到底部
+const scrollToBottom = (container: HTMLElement | null) => {
+  nextTick(() => {
+    if (container) {
+      container.scrollTop = container.scrollHeight
+    }
+  })
+}
+
+// 监听消息变化，自动滚动
+watch(() => leftMessages.value.length, () => {
+  scrollToBottom(leftChatContainer.value)
+})
+
+watch(() => rightMessages.value.length, () => {
+  scrollToBottom(rightChatContainer.value)
+})
+
+watch(() => leftUserMessages.value.length, () => {
+  scrollToBottom(leftChatContainer.value)
+})
+
+watch(() => rightUserMessages.value.length, () => {
+  scrollToBottom(rightChatContainer.value)
+})
+
+// 监听生成状态，流式输出时也要滚动
+watch(() => comparison.state.isLeftGenerating, () => {
+  scrollToBottom(leftChatContainer.value)
+})
+
+watch(() => comparison.state.isRightGenerating, () => {
+  scrollToBottom(rightChatContainer.value)
+})
+
+// 监听消息内容变化（流式输出更新）
+watch(() => {
+  const msgs = comparisonMode.value === 'system' ? leftMessages.value : leftUserMessages.value
+  return msgs.map(m => m.content).join('')
+}, () => {
+  scrollToBottom(leftChatContainer.value)
+}, { deep: true })
+
+watch(() => {
+  const msgs = comparisonMode.value === 'system' ? rightMessages.value : rightUserMessages.value
+  return msgs.map(m => m.content).join('')
+}, () => {
+  scrollToBottom(rightChatContainer.value)
+}, { deep: true })
 
 // Markdown渲染
 const renderMarkdown = (content: string): string => {

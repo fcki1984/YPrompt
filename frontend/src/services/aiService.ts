@@ -91,7 +91,8 @@ export class AIService {
     messages: ChatMessage[] | PromptChatMessage[], 
     provider: ProviderConfig, 
     modelId: string, 
-    stream: boolean = false
+    stream: boolean = false,
+    streamCallback?: (chunk: string) => void
   ): Promise<string> {
     const model = provider.models.find(m => m.id === modelId)
     const apiType = model?.apiType || provider.type
@@ -101,7 +102,7 @@ export class AIService {
       const providerInstance = this.getProvider(provider, modelId)
 
       if (stream) {
-        return await this.callWithStream(providerInstance, convertedMessages)
+        return await this.callWithStream(providerInstance, convertedMessages, streamCallback)
       } else {
         const response = await providerInstance.callAPI(convertedMessages, false)
         if (typeof response !== 'object' || !('content' in response)) {
@@ -118,8 +119,14 @@ export class AIService {
     }
   }
 
-  private async callWithStream(provider: BaseProvider, messages: AIChatMessage[]): Promise<string> {
-    const hasCallback = !!this.onStreamUpdate
+  private async callWithStream(
+    provider: BaseProvider, 
+    messages: AIChatMessage[],
+    streamCallback?: (chunk: string) => void
+  ): Promise<string> {
+    // 优先使用传入的回调，其次使用全局回调
+    const callback = streamCallback || this.onStreamUpdate
+    const hasGlobalCallback = !!this.onStreamUpdate
 
     try {
       const stream = await provider.callAPI(messages, true)
@@ -134,8 +141,8 @@ export class AIService {
 
       for await (const chunk of this.streamProcessor.processStream(stream, parseChunk)) {
         fullContent += chunk
-        if (this.onStreamUpdate) {
-          this.onStreamUpdate(chunk)
+        if (callback) {
+          callback(chunk)
         }
       }
 
@@ -148,7 +155,7 @@ export class AIService {
 
       return result
     } finally {
-      if (hasCallback) {
+      if (hasGlobalCallback) {
         this.clearStreamUpdateCallback()
       }
     }

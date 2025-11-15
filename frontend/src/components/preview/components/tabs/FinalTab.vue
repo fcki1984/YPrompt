@@ -57,8 +57,8 @@
             <span>{{ isSaving ? '保存中...' : '保存到数据库' }}</span>
           </button>
         </div>
-        <!-- 第二行：对比按钮 -->
-        <div class="flex">
+        <!-- 第二行：对比按钮（仅在优化页面显示） -->
+        <div v-if="showCompareButton" class="flex">
           <button 
             @click="$emit('compare')"
             :disabled="!generatedPrompt"
@@ -78,7 +78,7 @@ import { ref, onMounted } from 'vue'
 import { RefreshCw, Copy, Check, ArrowLeftRight } from 'lucide-vue-next'
 import { useAutoScroll } from '../../composables/useAutoScroll'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   generatedPrompt: string
   isExecuting: boolean
   isGenerating: boolean
@@ -89,7 +89,10 @@ const props = defineProps<{
   isSaving: boolean
   formatState: 'markdown' | 'xml'
   languageState: 'zh' | 'en'
-}>()
+  showCompareButton?: boolean  // 是否显示对比按钮，默认false（生成页面不显示）
+}>(), {
+  showCompareButton: false
+})
 
 const emit = defineEmits<{
   'update:generatedPrompt': [value: string]

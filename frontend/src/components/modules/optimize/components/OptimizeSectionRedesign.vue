@@ -244,6 +244,7 @@
             :is-saving="isSaving"
             :format-state="formatState"
             :language-state="languageState"
+            :show-compare-button="true"
             @regenerate="handleRegenerateFinal"
             @copy="handleCopyFinal"
             @toggle-format="handleToggleFormat"

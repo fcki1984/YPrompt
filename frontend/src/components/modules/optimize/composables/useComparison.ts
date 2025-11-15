@@ -299,20 +299,22 @@ export function useComparison() {
           .map(m => ({ role: m.role, content: m.content }))
       ]
       
-      // 设置流式回调
-      aiService.setStreamUpdateCallback((chunk: string) => {
+      // 为这个特定调用创建独立的流式回调
+      // 使用闭包捕获当前的 aiMessageId，避免并发时互相干扰
+      const streamCallback = (chunk: string) => {
         const msg = messages.find(m => m.id === aiMessageId)
         if (msg) {
           msg.content += chunk
         }
-      })
+      }
       
-      // 调用 AI
+      // 调用 AI，传入独立的回调函数（支持并发调用）
       const response = await aiService.callAI(
         apiMessages,
         currentProvider,
         currentModel,
-        true // 流式输出
+        true, // 流式输出
+        streamCallback // 传入回调参数，而不是全局设置
       )
       
       // 更新最终响应
@@ -321,8 +323,6 @@ export function useComparison() {
         msg.content = response
         msg.isStreaming = false
       }
-      
-      aiService.clearStreamUpdateCallback()
     } catch (error: any) {
       console.error(`${side} AI call failed:`, error)
       const msg = messages.find(m => m.id === aiMessageId)
