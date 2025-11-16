@@ -19,6 +19,113 @@ class PromptService:
         """
         self.db = db
     
+    async def save_prompt(self, user_id, data):
+        """
+        统一的保存方法(自动判断新建还是更新,自动创建版本)
+        
+        Args:
+            user_id: 用户ID
+            data: 提示词数据字典
+                - id: 提示词ID(可选,如果提供则更新)
+                - title: 标题
+                - final_prompt: 最终提示词
+                - create_version: 是否创建版本(默认True)
+                - change_summary: 版本变更说明(可选)
+                - change_type: 版本变更类型 major/minor/patch (默认patch)
+                - ... 其他字段
+        
+        Returns:
+            dict: {
+                'id': 提示词ID,
+                'is_new': 是否新建,
+                'version': 版本号(如果创建了版本),
+                'message': 成功消息
+            }
+        """
+        try:
+            prompt_id = data.get('id')
+            create_version = data.get('create_version', True)
+            change_summary = data.get('change_summary', '')
+            change_type = data.get('change_type', 'patch')
+            
+            # 判断是新建还是更新
+            if prompt_id:
+                # 验证提示词存在且有权限
+                check_sql = f"SELECT id, current_version FROM prompts WHERE id = {prompt_id} AND user_id = {user_id}"
+                existing = await self.db.get(check_sql)
+                
+                if not existing:
+                    raise PermissionError('提示词不存在或无权限修改')
+                
+                # 更新提示词
+                logger.info(f'🔄 更新提示词: prompt_id={prompt_id}')
+                await self.update_prompt(user_id, prompt_id, data)
+                
+                # 如果需要创建版本
+                version_number = None
+                if create_version:
+                    from apps.modules.versions.services import VersionService
+                    version_service = VersionService(self.db)
+                    
+                    # 生成下一个版本号
+                    current_version = existing.get('current_version', '1.0.0')
+                    version_number = version_service.generate_next_version(current_version, change_type)
+                    
+                    # 创建版本快照
+                    version_data = {
+                        'change_type': change_type,
+                        'change_summary': change_summary or f'更新提示词({change_type})',
+                        'change_log': data.get('change_log', ''),
+                        'version_tag': data.get('version_tag', 'stable')
+                    }
+                    
+                    version_result = await version_service.create_version(prompt_id, user_id, version_data)
+                    version_number = version_result['version_number']
+                    
+                    logger.info(f'✅ 版本创建成功: version={version_number}')
+                
+                return {
+                    'id': prompt_id,
+                    'is_new': False,
+                    'version': version_number,
+                    'message': f'更新成功' + (f',版本 {version_number}' if version_number else '')
+                }
+            else:
+                # 创建新提示词
+                logger.info(f'📝 创建新提示词')
+                prompt_id = await self.create_prompt(user_id, data)
+                
+                # 新建时默认创建初始版本 1.0.0
+                if create_version:
+                    from apps.modules.versions.services import VersionService
+                    version_service = VersionService(self.db)
+                    
+                    version_data = {
+                        'change_type': 'minor',
+                        'change_summary': change_summary or '初始版本',
+                        'change_log': '创建提示词',
+                        'version_tag': 'initial'
+                    }
+                    
+                    # create_version内部会自动生成版本号
+                    await version_service.create_version(prompt_id, user_id, version_data)
+                    logger.info(f'✅ 初始版本创建成功: version=1.0.0')
+                
+                return {
+                    'id': prompt_id,
+                    'is_new': True,
+                    'version': '1.0.0' if create_version else None,
+                    'message': '创建成功' + (',版本 1.0.0' if create_version else '')
+                }
+        
+        except PermissionError:
+            raise
+        except ValueError:
+            raise
+        except Exception as e:
+            logger.error(f'❌ 保存提示词失败: {e}')
+            raise
+    
     async def create_prompt(self, user_id, data):
         """
         创建提示词

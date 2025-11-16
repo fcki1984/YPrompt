@@ -18,15 +18,29 @@ prompts = Blueprint('prompts', url_prefix='/api/prompts')
 
 @prompts.post('/')
 @auth_required
-@openapi.summary("保存提示词")
-@openapi.description("保存用户生成的提示词到数据库")
+@openapi.summary("保存提示词(统一接口)")
+@openapi.description("保存或更新提示词,自动判断新建/更新,自动创建版本")
 @openapi.secured("BearerAuth")
 @openapi.body({"application/json": SavePromptRequest}, description="提示词数据", required=True)
 @openapi.response(200, {"application/json": SavePromptResponse}, description="保存成功")
 @openapi.response(400, {"application/json": ErrorResponse}, description="参数错误")
 @openapi.response(401, {"application/json": ErrorResponse}, description="未授权")
-async def create_prompt(request):
-    """保存提示词"""
+async def save_prompt(request):
+    """
+    统一的保存接口
+    
+    逻辑:
+    1. 如果data中有id且存在 -> 更新已有提示词 + 创建新版本(如果create_version=True)
+    2. 如果没有id或id不存在 -> 创建新提示词 + 创建初始版本
+    
+    请求参数:
+    - id: 提示词ID(可选,如果提供则更新)
+    - title: 标题
+    - final_prompt: 最终提示词
+    - create_version: 是否创建版本(默认True)
+    - change_summary: 版本变更说明(可选)
+    - ... 其他字段
+    """
     try:
         user_id = request.ctx.user_id
         data = request.json
@@ -44,18 +58,28 @@ async def create_prompt(request):
                 'message': '最终提示词不能为空'
             })
         
-        # 保存提示词
+        # 统一保存(自动判断新建还是更新)
         prompt_service = PromptService(request.app.ctx.db)
-        prompt_id = await prompt_service.create_prompt(user_id, data)
+        result = await prompt_service.save_prompt(user_id, data)
         
         return json({
             'code': 200,
-            'message': '保存成功',
-            'data': {
-                'id': prompt_id
-            }
+            'message': result.get('message', '保存成功'),
+            'data': result
         })
         
+    except ValueError as e:
+        logger.warning(f'⚠️  参数错误: {e}')
+        return json({
+            'code': 400,
+            'message': str(e)
+        })
+    except PermissionError as e:
+        logger.warning(f'⚠️  权限错误: {e}')
+        return json({
+            'code': 403,
+            'message': str(e)
+        })
     except Exception as e:
         logger.error(f'❌ 保存提示词失败: {e}')
         return json({

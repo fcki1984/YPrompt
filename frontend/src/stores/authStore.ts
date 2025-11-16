@@ -248,6 +248,37 @@ export const useAuthStore = defineStore('auth', () => {
     // 清除本地状态
     setToken(null)
     setUser(null)
+    
+    // 清除所有应用相关的 localStorage 数据
+    const keysToRemove = [
+      // 优化模块相关
+      'user_prompt_optimize_data',
+      'yprompt_optimize_active_mode',
+      'yprompt_optimize_cache',
+      'yprompt_user_optimize_active_tab',
+      'yprompt_optimize_loaded_user_prompt',
+      'yprompt_optimize_result',
+      // 生成模块相关
+      'yprompt_generate_messages',
+      'yprompt_generate_prompt_data',
+      // 其他可能的缓存
+      'yprompt_settings_cache',
+    ]
+    
+    keysToRemove.forEach(key => {
+      localStorage.removeItem(key)
+    })
+    
+    // 也可以清除所有以 yprompt_ 或 user_prompt_ 开头的 key
+    const allKeys = Object.keys(localStorage)
+    allKeys.forEach(key => {
+      if (key.startsWith('yprompt_') || key.startsWith('user_prompt_')) {
+        // 排除 token 和 user (已经在上面清除了)
+        if (key !== 'yprompt_token' && key !== 'yprompt_user') {
+          localStorage.removeItem(key)
+        }
+      }
+    })
   }
   
   /**
