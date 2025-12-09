@@ -15,20 +15,29 @@ export class OpenAIResponsesProvider extends BaseProvider {
     const apiUrl = this.buildApiUrl(this.config.baseUrl)
     const timeoutMs = this.getTimeout()
 
+    const systemPrompt = this.extractSystemPrompt(messages)
+    const userMessages = messages.filter(message => message.role !== 'system')
+
+    const payload: Record<string, unknown> = {
+      model: this.modelId,
+      input: this.convertMessages(userMessages),
+      temperature: params?.temperature ?? 1.0,
+      max_output_tokens: params?.maxTokens ?? 8192,
+      top_p: params?.topP ?? 0.95,
+      ...(stream && { stream: true })
+    }
+
+    if (systemPrompt) {
+      payload.system = systemPrompt
+    }
+
     const response = await this.fetchWithTimeout(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${this.config.apiKey}`
       },
-      body: JSON.stringify({
-        model: this.modelId,
-        input: this.convertMessages(messages),
-        temperature: params?.temperature ?? 1.0,
-        max_output_tokens: params?.maxTokens ?? 8192,
-        top_p: params?.topP ?? 0.95,
-        ...(stream && { stream: true })
-      })
+      body: JSON.stringify(payload)
     }, timeoutMs)
 
     if (!response.ok) {
@@ -142,10 +151,49 @@ export class OpenAIResponsesProvider extends BaseProvider {
   }
 
   private convertMessages(messages: ChatMessage[]): Array<{ role: string; content: MessageContent[] }> {
-    return messages.map(message => ({
-      role: message.role,
-      content: this.convertContent(message)
-    }))
+    const converted = messages
+      .map(message => ({
+        role: message.role,
+        content: this.convertContent(message)
+      }))
+      .filter(message => message.content.length > 0)
+
+    if (converted.length === 0) {
+      return [
+        {
+          role: 'user',
+          content: [{ type: 'input_text', text: '' }]
+        }
+      ]
+    }
+
+    return converted
+  }
+
+  private extractSystemPrompt(messages: ChatMessage[]): string {
+    const parts: string[] = []
+
+    for (const message of messages) {
+      if (message.role !== 'system') continue
+
+      if (typeof message.content === 'string') {
+        const trimmed = message.content.trim()
+        if (trimmed) {
+          parts.push(trimmed)
+        }
+      } else if (Array.isArray(message.content)) {
+        for (const item of message.content) {
+          if ('text' in item && typeof item.text === 'string') {
+            const trimmed = item.text.trim()
+            if (trimmed) {
+              parts.push(trimmed)
+            }
+          }
+        }
+      }
+    }
+
+    return parts.join('\n\n')
   }
 
   private convertContent(message: ChatMessage): MessageContent[] {
