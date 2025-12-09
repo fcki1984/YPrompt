@@ -16,14 +16,14 @@ export function useModelParams() {
   })
 
   // 获取默认参数值（基于最佳实践）
-  const getDefaultParams = (apiType: 'openai' | 'anthropic' | 'google' | 'custom' | null): ModelParams => {
+  const getDefaultParams = (apiType: 'openai' | 'openai-responses' | 'anthropic' | 'google' | 'custom' | null): ModelParams => {
     const defaults: ModelParams = {
       temperature: 1.0,      // 平衡创造性和稳定性（AI 对话/生成场景最佳实践）
       maxTokens: 8192,       // 足够长的输出，适合提示词生成场景
       topP: 0.95,            // 核采样，保留 95% 概率质量（避免极端词汇）
     }
 
-    if (apiType === 'openai' || apiType === 'custom') {
+    if (apiType === 'openai' || apiType === 'openai-responses' || apiType === 'custom') {
       defaults.frequencyPenalty = 0    // 不惩罚词频（提示词生成需要重复关键词）
       defaults.presencePenalty = 0     // 不强制多样性
     } else if (apiType === 'anthropic' || apiType === 'google') {
@@ -92,7 +92,7 @@ export function useModelParams() {
       
       case 'frequencyPenalty':
       case 'presencePenalty':
-        return apiType === 'openai'
+        return apiType === 'openai' || apiType === 'openai-responses'
       
       case 'topK':
         return apiType === 'anthropic' || apiType === 'google'
