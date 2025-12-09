@@ -1,7 +1,7 @@
 import type { MessageAttachment } from '@/stores/promptStore'
 
 export interface MessageContent {
-  type: 'text' | 'image_url' | 'image' | 'document' | 'audio' | 'video'
+  type: 'text' | 'input_text' | 'output_text' | 'image_url' | 'image' | 'document' | 'audio' | 'video'
   text?: string
   source?: {
     type: string

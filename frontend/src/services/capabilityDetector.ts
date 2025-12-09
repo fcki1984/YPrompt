@@ -628,7 +628,7 @@ export class CapabilityDetector {
       systemMessage: true
     }
 
-    if (apiType === 'openai') {
+    if (apiType === 'openai' || apiType === 'openai-responses') {
       return {
         reasoning: false,
         reasoningType: null,

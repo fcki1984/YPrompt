@@ -16,11 +16,13 @@ export class ModelFetcher {
     }
   }
 
-  static async getModels(provider: ProviderConfig, apiType?: 'openai' | 'anthropic' | 'google'): Promise<string[]> {
+  static async getModels(provider: ProviderConfig, apiType?: 'openai' | 'openai-responses' | 'anthropic' | 'google'): Promise<string[]> {
     const type = apiType || provider.type
-    
+
     switch (type) {
       case 'openai':
+        return await this.getOpenAIModels(provider)
+      case 'openai-responses':
         return await this.getOpenAIModels(provider)
       case 'anthropic':
         return await this.getAnthropicModels()
@@ -111,10 +113,12 @@ export class ModelFetcher {
     ].sort()
   }
 
-  private static async getCustomProviderModels(provider: ProviderConfig, preferredApiType?: 'openai' | 'anthropic' | 'google'): Promise<string[]> {
+  private static async getCustomProviderModels(provider: ProviderConfig, preferredApiType?: 'openai' | 'openai-responses' | 'anthropic' | 'google'): Promise<string[]> {
     if (preferredApiType) {
       switch (preferredApiType) {
         case 'openai':
+          return await this.getOpenAIModels(provider)
+        case 'openai-responses':
           return await this.getOpenAIModels(provider)
         case 'anthropic':
           return await this.getAnthropicModels()
@@ -213,16 +217,28 @@ export class ModelFetcher {
     if (!baseUrl) {
       throw new Error('API URL 未配置')
     }
-    
+
     let apiUrl = baseUrl.trim()
-    
+
+    // 统一处理以/v1开头的完整路径，去掉具体API路径
+    if (apiUrl.includes('/chat/completions')) {
+      apiUrl = apiUrl.split('/chat/completions')[0]
+    }
+
+    if (apiUrl.includes('/responses')) {
+      apiUrl = apiUrl.split('/responses')[0]
+    }
+
     if (apiUrl.endsWith('/models') || apiUrl.includes('/models?') || apiUrl.includes('/models/')) {
       return apiUrl
-    } else if (apiUrl.includes('/v1')) {
-      return apiUrl.replace(/\/+$/, '') + '/models'
-    } else {
-      return apiUrl.replace(/\/+$/, '') + '/v1/models'
     }
+
+    if (apiUrl.includes('/v1')) {
+      const [prefix] = apiUrl.split('/v1')
+      return prefix.replace(/\/+$/, '') + '/v1/models'
+    }
+
+    return apiUrl.replace(/\/+$/, '') + '/v1/models'
   }
 
   private static buildGeminiModelsUrl(baseUrl: string): string {

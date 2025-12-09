@@ -47,7 +47,7 @@ export class SSEParser {
     }
 
     const data = line.slice(6).trim()
-    if (!data || data === '[DONE]') {
+    if (!data) {
       return null
     }
 
