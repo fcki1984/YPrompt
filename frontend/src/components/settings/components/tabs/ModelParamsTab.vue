@@ -191,8 +191,8 @@
             {{ getParamLabel('reasoningEffort') }}
           </label>
           <select
-            v-model="params.reasoningEffort"
             @change="handleParamChange('reasoningEffort', $event)"
+            :value="params.reasoningEffort ?? ''"
             class="w-32 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
           >
             <option value="">自动（不指定）</option>
@@ -302,6 +302,8 @@ const handleParamChange = (paramName: keyof ModelParams, event: Event) => {
     const numericValue = parseFloat(target.value)
     value = Number.isNaN(numericValue) ? undefined : numericValue
   }
+
+  params.value[paramName] = value as any
 
   updateCurrentModelParams({
     [paramName]: value as any
