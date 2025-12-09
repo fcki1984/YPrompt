@@ -67,6 +67,7 @@ export class OpenAIProvider extends BaseProvider {
         top_p: params?.topP ?? 0.95,
         ...(params?.frequencyPenalty !== undefined && { frequency_penalty: params.frequencyPenalty }),
         ...(params?.presencePenalty !== undefined && { presence_penalty: params.presencePenalty }),
+        ...(params?.reasoningEffort && { reasoning_effort: params.reasoningEffort }),
         ...(stream && { stream: true })
       })
     }, timeoutMs)

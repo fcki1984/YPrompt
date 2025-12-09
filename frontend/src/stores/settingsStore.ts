@@ -38,11 +38,12 @@ export interface ModelParams {
   temperature?: number
   maxTokens?: number
   topP?: number
-  
+
   // OpenAI 特有参数
   frequencyPenalty?: number
   presencePenalty?: number
-  
+  reasoningEffort?: 'low' | 'medium' | 'high'
+
   // Claude/Gemini 特有参数
   topK?: number
 }

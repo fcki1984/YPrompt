@@ -27,6 +27,10 @@ export class OpenAIResponsesProvider extends BaseProvider {
       ...(stream && { stream: true })
     }
 
+    if (params?.reasoningEffort) {
+      payload.reasoning = { effort: params.reasoningEffort }
+    }
+
     if (systemPrompt) {
       payload.system = systemPrompt
     }
