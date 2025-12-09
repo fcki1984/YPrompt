@@ -26,7 +26,7 @@ export function useModelParams() {
     if (apiType === 'openai' || apiType === 'openai-responses' || apiType === 'custom') {
       defaults.frequencyPenalty = 0    // 不惩罚词频（提示词生成需要重复关键词）
       defaults.presencePenalty = 0     // 不强制多样性
-      defaults.reasoningEffort = undefined
+      defaults.reasoningEffort = 'medium'
     } else if (apiType === 'anthropic' || apiType === 'google') {
       defaults.topK = 0      // 0 表示不限制（Claude/Gemini 推荐）
     }
