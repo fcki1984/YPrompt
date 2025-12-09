@@ -151,14 +151,30 @@ export class OpenAIResponsesProvider extends BaseProvider {
   private convertContent(message: ChatMessage): MessageContent[] {
     const content: MessageContent[] = []
 
+    const getContentType = (existingType?: string): MessageContent['type'] => {
+      if (existingType && !['text', 'input_text', 'output_text'].includes(existingType)) {
+        return existingType as MessageContent['type']
+      }
+
+      if (message.role === 'system') {
+        return 'text'
+      }
+
+      if (message.role === 'assistant') {
+        return 'output_text'
+      }
+
+      return 'input_text'
+    }
+
     if (typeof message.content === 'string' && message.content.trim()) {
-      content.push({ type: 'input_text', text: message.content })
+      content.push({ type: getContentType(), text: message.content })
     } else if (Array.isArray(message.content)) {
       for (const item of message.content) {
-        if (item.type === 'text' && item.text) {
-          content.push({ type: 'input_text', text: item.text })
-        } else if (item.type && 'text' in item) {
-          content.push({ ...item })
+        if (item.type === 'text' && typeof item.text === 'string' && item.text.trim()) {
+          content.push({ type: getContentType(item.type), text: item.text })
+        } else if (item.type && 'text' in item && typeof item.text === 'string' && item.text.trim()) {
+          content.push({ ...item, type: getContentType(item.type), text: item.text })
         }
       }
     }
