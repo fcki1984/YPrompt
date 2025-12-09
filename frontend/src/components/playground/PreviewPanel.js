@@ -164,8 +164,8 @@ export default {
             左侧对话区会实时返回 AI 输出，这里会渲染各种 Artifact。尝试这些玩法：
           </p>
           <ul class="text-sm text-gray-600 space-y-1 max-w-xl text-left">
-            <li>• 生成 <span class="font-medium text-gray-800">HTML（支持Tailwind / Three.js / GSAP / ECharts）</span> </li>
-            <li>• 输出 <span class="font-medium text-gray-800">Markdown、SVG、MindMap、Mermaid、Draw.io</span> 等可视化</li>
+            <li>• 生成 <span class="font-medium text-gray-800">HTML（支持Tailwind、Three.js、GSAP、ECharts）</span> </li>
+            <li>• 输出 <span class="font-medium text-gray-800">Markdown、LaTeX、SVG、MindMap、Mermaid、Draw.io、Json</span> 等可视化</li>
           </ul>
         </div>
 

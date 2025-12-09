@@ -67,6 +67,13 @@ export async function post<T = any>(url: string, data?: any): Promise<T> {
   })
 }
 
+export async function patch<T = any>(url: string, data?: any): Promise<T> {
+  return request<T>(url, {
+    method: 'PATCH',
+    body: data ? JSON.stringify(data) : undefined,
+  })
+}
+
 /**
  * PUT请求
  */
@@ -196,6 +203,101 @@ export async function toggleFavorite(id: number, is_favorite: boolean) {
   return post(`/api/prompts/${id}/favorite`, { is_favorite })
 }
 
+// ============ 操练场分享相关API ============
+
+export interface PlaygroundShareMessage {
+  id: string
+  role: 'user' | 'model'
+  text: string
+  displayText?: string
+  timestamp?: number
+}
+
+export interface PlaygroundSharePayload {
+  title?: string
+  systemPrompt?: string
+  provider: Record<string, any>
+  artifact?: { type: string; content: string } | null
+  messages: PlaygroundShareMessage[]
+  is_permanent: boolean
+  expires_at?: string
+  access_mode: 'public' | 'auth_only'
+  password?: string
+}
+
+export interface PlaygroundShareListItem {
+  share_code: string
+  title: string
+  access_mode: 'public' | 'auth_only'
+  is_permanent: boolean
+  expires_at?: string | null
+  view_count: number
+  has_password: boolean
+  is_active: boolean
+  create_time: string
+}
+
+export interface PlaygroundShareDetail {
+  share_code: string
+  title: string
+  system_prompt?: string
+  provider?: Record<string, any>
+  artifact?: { type: string; content: string } | null
+  messages: PlaygroundShareMessage[]
+  owner: { id: number; name: string; avatar?: string }
+  created_at: string
+  view_count: number
+  access_mode: 'public' | 'auth_only'
+  is_permanent: boolean
+  expires_at?: string | null
+  has_password: boolean
+  can_edit: boolean
+}
+
+export async function createPlaygroundShare(payload: PlaygroundSharePayload) {
+  return post('/api/playground/shares', payload)
+}
+
+export async function getMyPlaygroundShares(params?: { page?: number; limit?: number }) {
+  const query = new URLSearchParams()
+  if (params?.page) query.set('page', String(params.page))
+  if (params?.limit) query.set('limit', String(params.limit))
+  const queryString = query.toString()
+  return get<{
+    code: number
+    data: { total: number; page: number; limit: number; items: PlaygroundShareListItem[] }
+  }>(
+    `/api/playground/shares${queryString ? `?${queryString}` : ''}`
+  )
+}
+
+export async function deletePlaygroundShare(code: string) {
+  return del(`/api/playground/shares/${code}`)
+}
+
+export async function updatePlaygroundShare(code: string, data: Record<string, any>) {
+  return patch(`/api/playground/shares/${code}`, data)
+}
+
+export async function fetchPlaygroundShare(code: string, password?: string) {
+  const headers: Record<string, string> = {}
+  if (password) {
+    headers['X-Share-Password'] = password
+  }
+  return request<{
+    code: number
+    data?: PlaygroundShareDetail
+    message?: string
+    need_password?: boolean
+  }>(
+    `/api/playground/shares/${code}`,
+    {
+      method: 'GET',
+      headers: Object.keys(headers).length ? headers : undefined
+    }
+  )
+}
+
 /**
  * 记录提示词使用次数
  */
@@ -320,4 +422,3 @@ export async function saveUserAIConfig(config: AIConfig) {
 export async function deleteUserAIConfig() {
   return del<{ code: number; message: string }>('/api/user-settings/ai-config')
 }
-

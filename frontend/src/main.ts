@@ -44,6 +44,17 @@ const router = createRouter({
       component: () => import('./components/modules/PlaygroundModule.vue')
     },
     {
+      path: '/playground/share/:code',
+      name: 'playground-share-view',
+      component: () => import('./views/PlaygroundShareView.vue'),
+      meta: { public: true }
+    },
+    {
+      path: '/playground/shares',
+      name: 'playground-share-manage',
+      component: () => import('./views/PlaygroundShareManage.vue')
+    },
+    {
       path: '/library',
       name: 'library',
       component: () => import('./components/modules/LibraryModule.vue')

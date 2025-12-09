@@ -207,6 +207,35 @@ CREATE TABLE `user_sessions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户会话表';
 
 -- ----------------------------
+-- 操练场分享表
+-- ----------------------------
+DROP TABLE IF EXISTS `playground_shares`;
+CREATE TABLE `playground_shares` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NOT NULL,
+  `share_code` VARCHAR(64) NOT NULL,
+  `title` VARCHAR(200) DEFAULT NULL,
+  `system_prompt` TEXT DEFAULT NULL,
+  `provider_snapshot` TEXT DEFAULT NULL,
+  `artifact_type` VARCHAR(50) DEFAULT NULL,
+  `artifact_content` MEDIUMTEXT DEFAULT NULL,
+  `messages_json` MEDIUMTEXT NOT NULL,
+  `is_permanent` TINYINT(1) DEFAULT 0,
+  `expires_at` DATETIME DEFAULT NULL,
+  `access_mode` VARCHAR(20) DEFAULT 'public',
+  `password_hash` VARCHAR(255) DEFAULT NULL,
+  `view_count` INT(11) DEFAULT 0,
+  `last_access_time` DATETIME DEFAULT NULL,
+  `is_active` TINYINT(1) DEFAULT 1,
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_playground_share_code` (`share_code`),
+  KEY `idx_playground_share_user` (`user_id`),
+  CONSTRAINT `fk_playground_share_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='操练场分享表';
+
+-- ----------------------------
 -- 用户提示词规则表
 -- ----------------------------
 DROP TABLE IF EXISTS `user_prompt_rules`;

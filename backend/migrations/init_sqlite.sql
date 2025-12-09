@@ -298,3 +298,38 @@ FOR EACH ROW
 BEGIN
   UPDATE user_ai_configs SET update_time = CURRENT_TIMESTAMP WHERE id = OLD.id;
 END;
+
+-- ==========================================
+-- 操练场分享表
+-- ==========================================
+CREATE TABLE IF NOT EXISTS playground_shares (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  share_code VARCHAR(64) NOT NULL,
+  title VARCHAR(200) DEFAULT NULL,
+  system_prompt TEXT DEFAULT NULL,
+  provider_snapshot TEXT DEFAULT NULL,
+  artifact_type VARCHAR(50) DEFAULT NULL,
+  artifact_content TEXT DEFAULT NULL,
+  messages_json TEXT NOT NULL,
+  is_permanent INTEGER DEFAULT 0,
+  expires_at DATETIME DEFAULT NULL,
+  access_mode VARCHAR(20) DEFAULT 'public',
+  password_hash TEXT DEFAULT NULL,
+  view_count INTEGER DEFAULT 0,
+  last_access_time DATETIME DEFAULT NULL,
+  is_active INTEGER DEFAULT 1,
+  create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+  update_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS uk_playground_share_code ON playground_shares(share_code);
+CREATE INDEX IF NOT EXISTS idx_playground_share_user ON playground_shares(user_id);
+
+CREATE TRIGGER IF NOT EXISTS update_playground_shares_timestamp 
+AFTER UPDATE ON playground_shares
+FOR EACH ROW
+BEGIN
+  UPDATE playground_shares SET update_time = CURRENT_TIMESTAMP WHERE id = OLD.id;
+END;

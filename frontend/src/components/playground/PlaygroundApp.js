@@ -514,7 +514,7 @@ export default {
             .filter(Boolean)
         : []
       messages.value = normalized
-      currentArtifact.value = null
+      currentArtifact.value = payload.artifact || null
       isStreaming.value = false
     }
 
@@ -525,8 +525,57 @@ export default {
           return
         }
         applyPrefillPayload(payload)
-      }
+      },
+      { immediate: true }
     )
+
+    const getSnapshot = () => {
+      if (!messages.value.length) {
+        throw new Error('暂无可分享的对话内容')
+      }
+      const hasAttachments = messages.value.some(
+        (msg) => msg.attachments && msg.attachments.length > 0
+      )
+      if (hasAttachments) {
+        throw new Error('分享暂不支持附件，请先移除对话中的附件')
+      }
+      const normalizedMessages = messages.value.map((msg) => ({
+        id: msg.id,
+        role: msg.role === 'model' ? 'model' : 'user',
+        text: msg.text || '',
+        displayText: msg.displayText,
+        timestamp: msg.timestamp
+      }))
+      const artifactSnapshot = currentArtifact.value
+        ? {
+            type: currentArtifact.value.type,
+            content: currentArtifact.value.content
+          }
+        : null
+      return {
+        messages: normalizedMessages,
+        artifact: artifactSnapshot
+      }
+    }
+
+    const loadSnapshot = (snapshot) => {
+      if (!snapshot) {
+        handleClear()
+        return
+      }
+      const normalized = Array.isArray(snapshot.messages)
+        ? snapshot.messages.map((msg, index) => ({
+            id: msg.id || `snapshot-${Date.now()}-${index}`,
+            role: msg.role === 'model' ? 'model' : 'user',
+            text: msg.text || '',
+            displayText: msg.displayText,
+            timestamp: msg.timestamp || Date.now() + index
+          }))
+        : []
+      messages.value = normalized
+      currentArtifact.value = snapshot.artifact || null
+      isStreaming.value = false
+    }
 
     return {
       messages,
@@ -552,7 +601,9 @@ export default {
       handleResendUserMessage,
       handleResendAfterEdit,
       updateEditingContent,
-      handleEditKeydown
+      handleEditKeydown,
+      getSnapshot,
+      loadSnapshot
     }
   }
 }

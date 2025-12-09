@@ -8,6 +8,14 @@
       @close="showSystemPromptModal = false"
       @save="handleSystemPromptSave"
     />
+    <PlaygroundShareModal
+      :is-open="shareModalOpen"
+      :system-prompt="systemPrompt"
+      :snapshot="shareSnapshot"
+      :provider-info="currentProviderSnapshot"
+      @close="closeShareModal"
+      @shared="handleShareCompleted"
+    />
 
     <div class="bg-white rounded-lg shadow-sm p-4 mb-4 flex-shrink-0">
       <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -46,12 +54,27 @@
                 {{ model.name }}
               </option>
             </select>
+            <button
+              class="px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors flex items-center gap-1"
+              @click="openShareModal"
+            >
+              <Share2 class="w-4 h-4" />
+              <span class="hidden sm:inline">分享快照</span>
+            </button>
+            <button
+              class="px-3 py-1.5 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center gap-1"
+              @click="goShareManagement"
+            >
+              <FolderGit2 class="w-4 h-4" />
+              <span class="hidden sm:inline">我的分享</span>
+            </button>
         </div>
       </div>
     </div>
 
     <div class="flex-1 min-h-0">
       <PlaygroundApp
+        ref="playgroundAppRef"
         :system-prompt="systemPrompt"
         :prefill-payload="prefillPayload"
         @open-system-prompt="openSystemPromptModal"
@@ -62,16 +85,23 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import PlaygroundApp from '@/components/playground/PlaygroundApp.js'
 import SystemPromptModal from '@/components/modules/optimize/components/SystemPromptModal.vue'
 import SettingsModal from '@/components/settings/SettingsModal.vue'
+import PlaygroundShareModal from '@/components/playground/PlaygroundShareModal.vue'
 import '@/utils/playgroundGlobals'
 import '@/style/playground.css'
 import { useSettingsStore } from '@/stores/settingsStore'
+import { useNotificationStore } from '@/stores/notificationStore'
+import { Share2, FolderGit2 } from 'lucide-vue-next'
 
 const settingsStore = useSettingsStore()
 const route = useRoute()
+const router = useRouter()
+const notificationStore = useNotificationStore()
+
+const playgroundAppRef = ref<any | null>(null)
 
 const availableProviders = computed(() => settingsStore.getAvailableProviders())
 const availableModels = computed(() => {
@@ -95,9 +125,34 @@ const showSystemPromptModal = ref(false)
 const prefillPayload = ref<PrefillPayload | null>(null)
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 
+interface ShareSnapshot {
+  messages: PrefillMessage[]
+  artifact: { type: string; content: string } | null
+}
+
+const shareModalOpen = ref(false)
+const shareSnapshot = ref<ShareSnapshot | null>(null)
+
+const currentProviderSnapshot = computed(() => {
+  const provider = settingsStore.getCurrentProvider()
+  const model = settingsStore.getCurrentModel()
+  if (!provider || !model) {
+    return null
+  }
+  return {
+    id: provider.id,
+    name: provider.name,
+    modelId: model.id,
+    modelName: model.name,
+    streamMode: settingsStore.streamMode
+  }
+})
+
 interface PrefillMessage {
   role: 'user' | 'model'
   text: string
+  displayText?: string
+  timestamp?: number
 }
 
 interface PrefillPayload {
@@ -105,6 +160,7 @@ interface PrefillPayload {
   promptId: number
   title: string
   messages: PrefillMessage[]
+  artifact?: { type: string; content: string } | null
 }
 
 if (typeof window !== 'undefined') {
@@ -130,6 +186,38 @@ const openSystemPromptModal = () => {
 
 const handleSystemPromptSave = () => {
   systemPrompt.value = systemPromptDraft.value
+}
+
+const openShareModal = () => {
+  if (!currentProviderSnapshot.value) {
+    notificationStore.warning('请先选择并配置可用的模型')
+    return
+  }
+  const instance = playgroundAppRef.value
+  if (!instance || typeof instance.getSnapshot !== 'function') {
+    notificationStore.error('无法获取当前对话内容')
+    return
+  }
+  try {
+    const snapshot = instance.getSnapshot()
+    shareSnapshot.value = snapshot
+    shareModalOpen.value = true
+  } catch (error: any) {
+    notificationStore.error(error?.message || '无法生成分享快照')
+  }
+}
+
+const closeShareModal = () => {
+  shareModalOpen.value = false
+  shareSnapshot.value = null
+}
+
+const handleShareCompleted = () => {
+  notificationStore.success('分享链接已生成')
+}
+
+const goShareManagement = () => {
+  router.push('/playground/shares')
 }
 
 interface PromptDetail {
@@ -212,7 +300,8 @@ const loadPromptForPlayground = async (promptId: number) => {
       timestamp: Date.now(),
       promptId: prompt.id,
       title: prompt.title,
-      messages: buildPrefillMessages(prompt)
+      messages: buildPrefillMessages(prompt),
+      artifact: null
     }
   } catch (error: any) {
     console.error('加载提示词到操练场失败:', error)
