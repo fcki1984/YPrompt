@@ -100,11 +100,28 @@ class VersionService:
             change_type = data.get('change_type', 'patch')
             current_version = current_prompt.get('current_version', '1.0.0')
             force_version_number = data.get('force_version_number')
-            
+
             if force_version_number:
                 new_version = force_version_number
             else:
-                new_version = self.generate_next_version(current_version, change_type)
+                # 使用版本历史中的最新版本来生成下一个版本号，避免回滚或软删除后版本号冲突
+                latest_version = await self.db.get(
+                    f"""
+                        SELECT version_number
+                        FROM prompt_versions
+                        WHERE prompt_id = {prompt_id}
+                        ORDER BY create_time DESC
+                        LIMIT 1
+                    """
+                )
+
+                base_version = (
+                    latest_version.get('version_number')
+                    if latest_version and latest_version.get('version_number')
+                    else (current_version or '1.0.0')
+                )
+
+                new_version = self.generate_next_version(base_version, change_type)
             
             # 3. 准备版本数据（完整快照）
             version_data = {
