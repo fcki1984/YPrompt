@@ -1,7 +1,9 @@
-FROM python:3.12-alpine
+FROM python:3.12-alpine3.19
 
 # 安装必要的运行时依赖（包含nginx与常用工具）
-RUN apk add --no-cache ca-certificates tzdata curl bash nginx
+# 先更新索引，避免因镜像架构切换（如 buildx/qemu）导致的包缺失
+RUN apk update && \
+    apk add --no-cache ca-certificates tzdata curl bash nginx
 
 # 设置时区
 ENV TZ=Asia/Shanghai
