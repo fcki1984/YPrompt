@@ -1,19 +1,7 @@
-FROM node:20-alpine AS frontend-builder
+FROM nginx:alpine
 
-WORKDIR /app/frontend
-
-# 仅复制依赖清单以利用缓存
-COPY frontend/package*.json ./
-
-# 安装前端依赖并构建产物
-RUN npm ci
-COPY frontend .
-RUN npm run build
-
-FROM python:3.12-alpine
-
-# 安装必要的运行时依赖（包含nginx与常用工具）
-RUN apk add --no-cache ca-certificates tzdata curl bash nginx
+# 安装必要的运行时依赖
+RUN apk add --no-cache ca-certificates tzdata curl bash python3 py3-pip
 
 # 设置时区
 ENV TZ=Asia/Shanghai
@@ -51,15 +39,15 @@ COPY backend /app/backend/
 
 # 安装Python依赖
 RUN cd /app/backend && \
-    pip install --no-cache-dir -r requirements.txt && \
+    pip3 install --no-cache-dir --break-system-packages -r requirements.txt && \
     chmod +x run.py
 
 # ==========================================
 # 前端部分
 # ==========================================
 
-# 复制前端构建产物（来自前端构建阶段）
-COPY --from=frontend-builder /app/frontend/dist /app/frontend/dist/
+# 复制前端构建产物（从 build-context 目录）
+COPY frontend-dist /app/frontend/dist/
 
 # ==========================================
 # 启动脚本
@@ -70,7 +58,7 @@ COPY start.sh /app/
 RUN chmod +x /app/start.sh
 
 # 创建健康检查脚本（直接在镜像中创建，避免依赖外部文件）
-RUN cat > /app/healthcheck.sh << 'EOFHC'
+RUN cat > /app/healthcheck.sh << 'EOF'
 #!/bin/bash
 # 健康检查脚本 - 检查nginx和后端服务是否正常
 
@@ -99,7 +87,7 @@ fi
 
 # 所有检查通过
 exit 0
-EOFHC
+EOF
 
 RUN chmod +x /app/healthcheck.sh
 
