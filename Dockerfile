@@ -1,7 +1,7 @@
-FROM nginx:alpine
+FROM python:3.12-alpine
 
-# 安装必要的运行时依赖
-RUN apk add --no-cache ca-certificates tzdata curl bash python3 py3-pip
+# 安装必要的运行时依赖（包含nginx与常用工具）
+RUN apk add --no-cache ca-certificates tzdata curl bash nginx
 
 # 设置时区
 ENV TZ=Asia/Shanghai
@@ -39,7 +39,7 @@ COPY backend /app/backend/
 
 # 安装Python依赖
 RUN cd /app/backend && \
-    pip3 install --no-cache-dir --break-system-packages -r requirements.txt && \
+    pip install --no-cache-dir -r requirements.txt && \
     chmod +x run.py
 
 # ==========================================
@@ -58,7 +58,7 @@ COPY start.sh /app/
 RUN chmod +x /app/start.sh
 
 # 创建健康检查脚本（直接在镜像中创建，避免依赖外部文件）
-RUN cat > /app/healthcheck.sh << 'EOF'
+RUN cat > /app/healthcheck.sh << 'EOFHC'
 #!/bin/bash
 # 健康检查脚本 - 检查nginx和后端服务是否正常
 
@@ -87,7 +87,7 @@ fi
 
 # 所有检查通过
 exit 0
-EOF
+EOFHC
 
 RUN chmod +x /app/healthcheck.sh
 
