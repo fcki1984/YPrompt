@@ -1,7 +1,15 @@
 FROM nginx:alpine
 
 # 安装必要的运行时依赖
-RUN apk add --no-cache ca-certificates tzdata curl bash python3 py3-pip
+# 使用构建依赖编译 cryptography/uvloop 等需要本地编译的包，安装完 Python 依赖后再删除构建依赖减小镜像体积
+RUN apk add --no-cache ca-certificates tzdata curl bash python3 py3-pip \
+    && apk add --no-cache --virtual .build-deps \
+      build-base \
+      libffi-dev \
+      openssl-dev \
+      musl-dev \
+      cargo \
+      python3-dev
 
 # 设置时区
 ENV TZ=Asia/Shanghai
@@ -40,7 +48,8 @@ COPY backend /app/backend/
 # 安装Python依赖
 RUN cd /app/backend && \
     pip3 install --no-cache-dir --break-system-packages -r requirements.txt && \
-    chmod +x run.py
+    chmod +x run.py && \
+    apk del .build-deps
 
 # ==========================================
 # 前端部分
