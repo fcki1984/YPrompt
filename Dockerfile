@@ -1,7 +1,8 @@
 FROM nginx:alpine
 
-# 安装必要的运行时依赖
-RUN apk add --no-cache ca-certificates tzdata curl bash python3 py3-pip
+# 安装必要的运行时依赖（输出详细错误信息以便调试）
+RUN set -eux; \
+    apk add --no-cache ca-certificates tzdata curl bash python3 py3-pip
 
 # 设置时区
 ENV TZ=Asia/Shanghai
