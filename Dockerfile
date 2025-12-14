@@ -47,7 +47,7 @@ COPY backend /app/backend/
 
 # 安装Python依赖
 RUN cd /app/backend && \
-    pip3 install --no-cache-dir --break-system-packages -r requirements.txt && \
+    pip3 install --no-cache-dir -r requirements.txt && \
     chmod +x run.py && \
     apk del .build-deps
 
