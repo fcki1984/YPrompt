@@ -1,7 +1,16 @@
 FROM nginx:alpine
 
-# 安装必要的运行时依赖
-RUN apk add --no-cache ca-certificates tzdata curl bash python3 py3-pip
+# 安装必要的运行时依赖（输出详细错误信息以便调试）
+RUN set -eux; \
+    echo "Alpine release: $(cat /etc/alpine-release)"; \
+    echo "Repositories:"; cat /etc/apk/repositories; \
+    apk update; \
+    if ! apk add --no-cache -v ca-certificates tzdata curl bash python3 py3-pip; then \
+        rc=$?; \
+        echo "apk add failed with exit code ${rc}"; \
+        ls -l /var/cache/apk || true; \
+        exit ${rc}; \
+    fi
 
 # 设置时区
 ENV TZ=Asia/Shanghai
