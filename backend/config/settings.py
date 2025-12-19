@@ -28,10 +28,10 @@ class Config(BaseConfig):
     DEFAULT_ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD') or (cf.DEFAULT_ADMIN_PASSWORD if hasattr(cf, 'DEFAULT_ADMIN_PASSWORD') else 'admin123')
     DEFAULT_ADMIN_NAME = cf.DEFAULT_ADMIN_NAME if hasattr(cf, 'DEFAULT_ADMIN_NAME') else '管理员'
     
-    # 是否允许注册（优先使用环境变量，默认关闭）
+    # 是否允许注册（优先使用环境变量）
     _registration_env = os.getenv('REGISTRATION_ENABLED')
     if _registration_env is not None:
         REGISTRATION_ENABLED = _registration_env.lower() in ('1', 'true', 'yes', 'on')
     else:
-        REGISTRATION_ENABLED = getattr(cf, 'REGISTRATION_ENABLED', False)
+        REGISTRATION_ENABLED = cf.REGISTRATION_ENABLED if hasattr(cf, 'REGISTRATION_ENABLED') else False
 

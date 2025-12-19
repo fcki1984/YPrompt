@@ -57,7 +57,7 @@
         <div class="w-16 h-16 rounded-2xl bg-white border border-gray-200 flex items-center justify-center mb-4">
           <Sparkles class="w-8 h-8 text-gray-300" />
         </div>
-        <p class="text-base font-medium text-gray-700 mb-2">欢迎使用提示词操练场</p>
+        <p class="text-base font-medium text-gray-700 mb-2">欢迎使用提示词演练</p>
         <p class="text-sm text-gray-500 max-w-xs">
           对话生成结果会在右侧实时渲染
         </p>
@@ -331,7 +331,6 @@
               class="w-full h-full px-3 pt-3 pb-1 border-0 outline-none resize-none text-base overflow-y-auto bg-transparent"
               :placeholder="placeholderText"
               @keydown="handleKeydown"
-              @input="autoResize"
             ></textarea>
           </div>
           <div class="absolute bottom-0 left-0 right-0 h-12 flex items-center justify-between px-3 bg-transparent pointer-events-none">
@@ -470,12 +469,6 @@ const syncLucideIcons = () => {
   }
 }
 
-const autoResize = () => {
-  if (!textareaRef.value) return
-  textareaRef.value.style.height = 'auto'
-  textareaRef.value.style.height = `${Math.min(textareaRef.value.scrollHeight, 200)}px`
-}
-
 watch(
   () => props.messages,
   () => {
@@ -504,7 +497,6 @@ onMounted(() => {
   syncLucideIcons()
   nextTick(() => {
     textareaRef.value?.focus()
-    autoResize()
   })
 })
 

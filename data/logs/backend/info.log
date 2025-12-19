@@ -1,0 +1,1201 @@
+2025-12-16 17:16:55,783 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8888                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-16 17:16:56,968 | INFO | Server Stopped
+2025-12-16 17:17:37,351 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8888                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-16 17:17:39,649 | INFO | Sanic Extensions:
+2025-12-16 17:17:39,650 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-16 17:17:39,650 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-16 17:17:39,650 | INFO |   > http 
+2025-12-16 17:17:39,650 | INFO |   > templating [jinja2==3.1.2]
+2025-12-16 17:17:39,704 | INFO | 📦 初始化数据库: sqlite
+2025-12-16 17:17:39,704 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-16 17:17:39,735 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-16 17:17:39,739 | INFO | 📦 SQLite数据库为空，开始初始化...
+2025-12-16 17:17:39,791 | INFO | ✅ SQLite表结构初始化完成
+2025-12-16 17:17:40,063 | INFO | ✅ 默认管理员账号创建成功: admin / admin123
+2025-12-16 17:17:40,063 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-16 17:17:54,935 | WARNING | ⚠️  用户不存在: username=demo
+2025-12-16 17:18:04,632 | INFO | ✅ 本地用户登录成功: username=admin, id=1
+2025-12-16 17:18:04,635 | INFO | ✅ 本地用户登录成功: username=admin, id=1
+2025-12-16 17:18:47,599 | INFO | Created user AI config successfully: user_id=1
+2025-12-16 17:19:48,308 | INFO | Updated user AI config successfully: user_id=1
+2025-12-16 17:20:02,583 | INFO | Updated user AI config successfully: user_id=1
+2025-12-16 17:20:09,328 | INFO | Updated user AI config successfully: user_id=1
+2025-12-16 17:20:13,934 | INFO | Updated user AI config successfully: user_id=1
+2025-12-16 17:20:16,596 | INFO | Updated user AI config successfully: user_id=1
+2025-12-16 17:20:42,381 | INFO | Updated user AI config successfully: user_id=1
+2025-12-16 17:20:45,075 | INFO | Updated user AI config successfully: user_id=1
+2025-12-16 17:21:55,510 | INFO | Updated user AI config successfully: user_id=1
+2025-12-16 17:46:52,019 | INFO | ✅ SQLite连接已关闭
+2025-12-16 17:46:52,028 | INFO | ✅ 数据库连接已关闭
+2025-12-16 17:46:53,718 | INFO | Sanic Extensions:
+2025-12-16 17:46:53,718 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-16 17:46:53,718 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-16 17:46:53,719 | INFO |   > http 
+2025-12-16 17:46:53,719 | INFO |   > templating [jinja2==3.1.2]
+2025-12-16 17:46:53,781 | INFO | 📦 初始化数据库: sqlite
+2025-12-16 17:46:53,781 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-16 17:46:53,799 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-16 17:46:53,801 | INFO | 📦 SQLite数据库为空，开始初始化...
+2025-12-16 17:46:53,829 | INFO | ✅ SQLite表结构初始化完成
+2025-12-16 17:46:54,095 | INFO | ✅ 默认管理员账号创建成功: admin / admin123
+2025-12-16 17:46:54,095 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-16 17:47:49,151 | INFO | Created user AI config successfully: user_id=1
+2025-12-16 17:48:19,411 | INFO | ✅ 操练场分享创建成功: user_id=1, share_code=fFNeyuSuDY6M
+2025-12-16 17:48:26,191 | INFO | ✅ 删除操练场分享: user_id=1, share_code=fFNeyuSuDY6M
+2025-12-16 18:30:26,952 | INFO | Received signal SIGINT. Shutting down.
+2025-12-16 18:30:27,025 | INFO | ✅ SQLite连接已关闭
+2025-12-16 18:30:27,028 | INFO | ✅ 数据库连接已关闭
+2025-12-16 18:30:27,318 | INFO | Server Stopped
+2025-12-16 18:30:34,496 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8888                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-16 18:30:36,329 | INFO | Sanic Extensions:
+2025-12-16 18:30:36,329 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-16 18:30:36,329 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-16 18:30:36,329 | INFO |   > http 
+2025-12-16 18:30:36,329 | INFO |   > templating [jinja2==3.1.2]
+2025-12-16 18:30:36,374 | INFO | 📦 初始化数据库: sqlite
+2025-12-16 18:30:36,374 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-16 18:30:36,388 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-16 18:30:36,389 | INFO | 📦 SQLite数据库为空，开始初始化...
+2025-12-16 18:30:36,431 | INFO | ✅ SQLite表结构初始化完成
+2025-12-16 18:30:36,682 | INFO | ✅ 默认管理员账号创建成功: admin / admin123
+2025-12-16 18:30:36,682 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-16 18:32:50,958 | INFO | Received signal SIGINT. Shutting down.
+2025-12-16 18:32:51,081 | INFO | ✅ SQLite连接已关闭
+2025-12-16 18:32:51,085 | INFO | ✅ 数据库连接已关闭
+2025-12-16 18:32:51,592 | INFO | Server Stopped
+2025-12-16 18:33:05,124 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8888                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-16 18:33:06,887 | INFO | Sanic Extensions:
+2025-12-16 18:33:06,887 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-16 18:33:06,888 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-16 18:33:06,888 | INFO |   > http 
+2025-12-16 18:33:06,889 | INFO |   > templating [jinja2==3.1.2]
+2025-12-16 18:33:06,935 | INFO | 📦 初始化数据库: sqlite
+2025-12-16 18:33:06,935 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-16 18:33:06,965 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-16 18:33:06,968 | INFO | 📦 SQLite数据库为空，开始初始化...
+2025-12-16 18:33:07,011 | INFO | ✅ SQLite表结构初始化完成
+2025-12-16 18:33:07,257 | INFO | ✅ 默认管理员账号创建成功: admin / admin123
+2025-12-16 18:33:07,257 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-16 18:34:34,309 | INFO | 📝 创建新提示词
+2025-12-16 18:34:34,315 | INFO | ✅ 提示词创建成功: prompt_id=1, user_id=1, title=提示词_2025/12/16
+2025-12-16 18:34:34,320 | INFO | ✅ 版本创建成功: prompt_id=1, version=1.0.0
+2025-12-16 18:34:34,321 | INFO | ✅ 初始版本创建成功: version=1.0.0
+2025-12-16 18:34:43,327 | INFO | ✅ 更新提示词成功: prompt_id=1, user_id=1
+2025-12-16 18:50:41,392 | INFO | 📤 用户登出: user_id=1
+2025-12-16 18:50:54,773 | INFO | Received signal SIGINT. Shutting down.
+2025-12-16 18:50:59,183 | INFO | Shutdown interrupted. Killing.
+2025-12-16 18:50:59,184 | INFO | Killing Sanic-Server-0-0 [95209]
+2025-12-16 18:50:59,184 | INFO | Killing Sanic-Reloader-0 [95210]
+2025-12-16 18:50:59,185 | INFO | Received signal SIGINT. Shutting down.
+2025-12-16 18:50:59,240 | INFO | Server Stopped
+2025-12-16 19:08:33,405 | ERROR | ❌ 注册蓝图失败 [community]: (unicode error) 'utf-8' codec can't decode byte 0xd0 in position 7: invalid continuation byte (__init__.py, line 1)
+2025-12-16 19:08:33,923 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8888                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-16 19:08:34,384 | ERROR | ❌ 注册蓝图失败 [community]: (unicode error) 'utf-8' codec can't decode byte 0xd0 in position 7: invalid continuation byte (__init__.py, line 1)
+2025-12-16 19:08:35,418 | ERROR | ❌ 注册蓝图失败 [community]: (unicode error) 'utf-8' codec can't decode byte 0xd0 in position 7: invalid continuation byte (__init__.py, line 1)
+2025-12-16 19:08:35,418 | ERROR | ❌ 注册蓝图失败 [community]: (unicode error) 'utf-8' codec can't decode byte 0xd0 in position 7: invalid continuation byte (__init__.py, line 1)
+2025-12-16 19:08:35,872 | INFO | Sanic Extensions:
+2025-12-16 19:08:35,872 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-16 19:08:35,872 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-16 19:08:35,873 | INFO |   > http 
+2025-12-16 19:08:35,873 | INFO |   > templating [jinja2==3.1.2]
+2025-12-16 19:08:35,918 | INFO | 📦 初始化数据库: sqlite
+2025-12-16 19:08:35,918 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-16 19:08:35,933 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-16 19:08:35,935 | INFO | 📦 SQLite数据库为空，开始初始化...
+2025-12-16 19:08:35,971 | INFO | ✅ SQLite表结构初始化完成
+2025-12-16 19:08:36,218 | INFO | ✅ 默认管理员账号创建成功: admin / admin123
+2025-12-16 19:08:36,218 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-16 19:09:59,971 | INFO | Received signal SIGINT. Shutting down.
+2025-12-16 19:10:10,385 | INFO | Server Stopped
+2025-12-16 19:10:32,386 | INFO | Shutdown interrupted. Killing.
+2025-12-16 19:10:32,387 | INFO | Killing Sanic-Server-0-0 [8426]
+2025-12-16 19:10:32,387 | INFO | Killing Sanic-Reloader-0 [8427]
+2025-12-16 19:10:32,387 | INFO | Received signal SIGINT. Shutting down.
+2025-12-16 19:12:26,452 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8888                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-16 19:12:28,331 | INFO | Sanic Extensions:
+2025-12-16 19:12:28,331 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-16 19:12:28,331 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-16 19:12:28,331 | INFO |   > http 
+2025-12-16 19:12:28,331 | INFO |   > templating [jinja2==3.1.2]
+2025-12-16 19:12:28,375 | INFO | 📦 初始化数据库: sqlite
+2025-12-16 19:12:28,375 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-16 19:12:28,394 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-16 19:12:28,397 | INFO | 📦 SQLite数据库为空，开始初始化...
+2025-12-16 19:12:28,441 | INFO | ✅ SQLite表结构初始化完成
+2025-12-16 19:12:28,692 | INFO | ✅ 默认管理员账号创建成功: admin / admin123
+2025-12-16 19:12:28,692 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-16 19:12:48,276 | INFO | ✅ 本地用户登录成功: username=admin, id=1
+2025-12-16 19:12:48,279 | INFO | ✅ 本地用户登录成功: username=admin, id=1
+2025-12-16 19:13:56,590 | INFO | 📤 用户登出: user_id=1
+2025-12-16 19:14:02,816 | INFO | ✅ 本地用户登录成功: username=admin, id=1
+2025-12-16 19:14:02,816 | INFO | ✅ 本地用户登录成功: username=admin, id=1
+2025-12-16 19:15:49,610 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:15:49,614 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:15:52,717 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:15:52,717 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:15:54,017 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:15:54,018 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:16:05,495 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:16:05,497 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:16:11,741 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:16:11,744 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:16:19,959 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:16:19,969 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:16:30,893 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:16:30,894 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:16:38,590 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:16:38,590 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:18:29,183 | INFO | 📝 创建新提示词
+2025-12-16 19:18:29,192 | INFO | ✅ 提示词创建成功: prompt_id=1, user_id=1, title=提示词_2025/12/16
+2025-12-16 19:18:29,198 | INFO | ✅ 版本创建成功: prompt_id=1, version=1.0.0
+2025-12-16 19:18:29,198 | INFO | ✅ 初始版本创建成功: version=1.0.0
+2025-12-16 19:18:33,410 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:18:33,410 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:18:35,509 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:18:35,509 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:18:43,322 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:18:43,323 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:18:45,177 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:18:45,180 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:19:02,949 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:19:02,956 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:19:08,064 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:19:08,065 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:19:21,416 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:19:21,420 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:19:23,981 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:19:23,982 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:19:30,762 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:19:30,763 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:20:37,077 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:20:37,081 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:20:38,317 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:20:38,320 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:20:39,382 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:20:39,383 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:20:40,827 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:20:40,833 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:20:45,047 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:20:45,052 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:20:47,303 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:20:47,304 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:20:55,131 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:20:55,134 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:21:00,925 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:21:00,929 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:22:28,957 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:22:28,958 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:23:13,811 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:23:13,814 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:23:26,980 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:23:26,981 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:23:28,460 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:23:28,461 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:24:41,025 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:24:41,029 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:25:54,716 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:25:54,717 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:06,836 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:06,840 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:08,022 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:08,028 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:08,918 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:08,919 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:10,494 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:10,495 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:11,237 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:11,241 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:11,481 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:11,482 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:11,726 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:11,729 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:11,991 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:11,991 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:12,278 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:12,278 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:12,930 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:12,934 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:53,159 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:28:53,160 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:29:02,371 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:29:02,371 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:29:11,155 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:29:11,159 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:29:37,736 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:29:37,749 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:34:00,866 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:34:00,871 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:34:04,998 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:34:04,998 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:35:35,718 | INFO | Received signal SIGINT. Shutting down.
+2025-12-16 19:35:36,433 | INFO | Shutdown interrupted. Killing.
+2025-12-16 19:35:36,434 | INFO | Killing Sanic-Server-0-0 [10116]
+2025-12-16 19:35:36,435 | INFO | Killing Sanic-Reloader-0 [10117]
+2025-12-16 19:35:36,436 | INFO | Received signal SIGINT. Shutting down.
+2025-12-16 19:35:36,477 | INFO | Server Stopped
+2025-12-16 19:35:50,418 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8888                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-16 19:35:52,453 | INFO | Sanic Extensions:
+2025-12-16 19:35:52,454 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-16 19:35:52,454 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-16 19:35:52,454 | INFO |   > http 
+2025-12-16 19:35:52,455 | INFO |   > templating [jinja2==3.1.2]
+2025-12-16 19:35:52,508 | INFO | 📦 初始化数据库: sqlite
+2025-12-16 19:35:52,508 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-16 19:35:52,524 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-16 19:35:52,527 | INFO | 📦 SQLite数据库为空，开始初始化...
+2025-12-16 19:35:52,573 | INFO | ✅ SQLite表结构初始化完成
+2025-12-16 19:35:52,824 | INFO | ✅ 默认管理员账号创建成功: admin / admin123
+2025-12-16 19:35:52,824 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-16 19:35:59,042 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:35:59,049 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:36:10,322 | INFO | 📝 创建新提示词
+2025-12-16 19:36:10,328 | INFO | ✅ 提示词创建成功: prompt_id=1, user_id=1, title=提示词_2025/12/16
+2025-12-16 19:36:10,332 | INFO | ✅ 版本创建成功: prompt_id=1, version=1.0.0
+2025-12-16 19:36:10,332 | INFO | ✅ 初始版本创建成功: version=1.0.0
+2025-12-16 19:36:28,144 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:36:28,145 | ERROR | ❌ 获取公开提示词列表失败: no such column: p.like_count
+2025-12-16 19:37:57,484 | INFO | Received signal SIGINT. Shutting down.
+2025-12-16 19:38:03,638 | INFO | Shutdown interrupted. Killing.
+2025-12-16 19:38:03,639 | INFO | Killing Sanic-Server-0-0 [19367]
+2025-12-16 19:38:03,640 | INFO | Killing Sanic-Reloader-0 [19368]
+2025-12-16 19:38:03,640 | INFO | Received signal SIGINT. Shutting down.
+2025-12-16 19:38:03,682 | INFO | Server Stopped
+2025-12-16 19:38:58,544 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8888                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-16 19:39:00,695 | INFO | Sanic Extensions:
+2025-12-16 19:39:00,695 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-16 19:39:00,695 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-16 19:39:00,695 | INFO |   > http 
+2025-12-16 19:39:00,695 | INFO |   > templating [jinja2==3.1.2]
+2025-12-16 19:39:00,744 | INFO | 📦 初始化数据库: sqlite
+2025-12-16 19:39:00,745 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-16 19:39:00,763 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-16 19:39:00,766 | INFO | 📦 SQLite数据库为空，开始初始化...
+2025-12-16 19:39:00,816 | INFO | ✅ SQLite表结构初始化完成
+2025-12-16 19:39:01,064 | INFO | ✅ 默认管理员账号创建成功: admin / admin123
+2025-12-16 19:39:01,064 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-16 19:39:14,006 | INFO | 📝 创建新提示词
+2025-12-16 19:39:14,011 | INFO | ✅ 提示词创建成功: prompt_id=1, user_id=1, title=提示词_2025/12/16
+2025-12-16 19:39:14,015 | INFO | ✅ 版本创建成功: prompt_id=1, version=1.0.0
+2025-12-16 19:39:14,016 | INFO | ✅ 初始版本创建成功: version=1.0.0
+2025-12-16 19:40:35,603 | INFO | ✅ 更新提示词成功: prompt_id=1, user_id=1
+2025-12-16 19:41:00,531 | INFO | ✅ 操练场分享创建成功: user_id=1, share_code=Iuql8kTlQTgd
+2025-12-16 19:41:35,114 | INFO | 📝 创建新提示词
+2025-12-16 19:41:35,122 | INFO | ✅ 提示词创建成功: prompt_id=2, user_id=1, title=宠物
+2025-12-16 19:41:35,128 | INFO | ✅ 版本创建成功: prompt_id=2, version=1.0.0
+2025-12-16 19:41:35,128 | INFO | ✅ 初始版本创建成功: version=1.0.0
+2025-12-17 10:17:26,946 | INFO | ✅ 更新提示词成功: prompt_id=1, user_id=1
+2025-12-17 10:19:02,774 | INFO | ✅ 创建评论成功: comment_id=1, prompt_id=1
+2025-12-17 10:19:52,592 | INFO | ✅ 更新提示词成功: prompt_id=1, user_id=1
+2025-12-17 10:21:40,090 | INFO | ✅ 更新提示词成功: prompt_id=1, user_id=1
+2025-12-17 10:35:42,676 | INFO | Received signal SIGINT. Shutting down.
+2025-12-17 10:35:42,845 | INFO | ✅ SQLite连接已关闭
+2025-12-17 10:35:42,847 | INFO | ✅ 数据库连接已关闭
+2025-12-17 10:35:43,390 | INFO | Server Stopped
+2025-12-17 12:09:08,229 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8888                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-17 12:09:10,276 | INFO | Sanic Extensions:
+2025-12-17 12:09:10,276 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-17 12:09:10,276 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-17 12:09:10,276 | INFO |   > http 
+2025-12-17 12:09:10,277 | INFO |   > templating [jinja2==3.1.2]
+2025-12-17 12:09:10,340 | INFO | 📦 初始化数据库: sqlite
+2025-12-17 12:09:10,341 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-17 12:09:10,371 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-17 12:09:10,376 | INFO | ✅ SQLite数据库已存在，跳过表结构初始化
+2025-12-17 12:09:10,887 | INFO | ✅ 管理员账号配置正确: admin
+2025-12-17 12:09:10,887 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-17 12:25:09,329 | ERROR | ❌ 切换点赞状态失败: no such function: GREATEST
+2025-12-17 12:25:09,354 | ERROR | ❌ 切换点赞失败: no such function: GREATEST
+2025-12-17 12:25:15,923 | ERROR | ❌ 切换点赞状态失败: no such function: GREATEST
+2025-12-17 12:25:15,924 | ERROR | ❌ 切换点赞失败: no such function: GREATEST
+2025-12-17 12:25:24,465 | ERROR | ❌ 切换点赞状态失败: no such function: GREATEST
+2025-12-17 12:25:24,465 | ERROR | ❌ 切换点赞失败: no such function: GREATEST
+2025-12-17 12:25:28,539 | ERROR | ❌ 切换点赞状态失败: no such function: GREATEST
+2025-12-17 12:25:28,539 | ERROR | ❌ 切换点赞失败: no such function: GREATEST
+2025-12-17 12:26:41,519 | INFO | ✅ 更新提示词成功: prompt_id=1, user_id=1
+2025-12-17 12:54:02,399 | ERROR | ❌ 切换点赞状态失败: no such function: GREATEST
+2025-12-17 12:54:02,414 | ERROR | ❌ 切换点赞失败: no such function: GREATEST
+2025-12-17 12:55:32,270 | ERROR | ❌ 切换点赞状态失败: no such function: GREATEST
+2025-12-17 12:55:32,286 | ERROR | ❌ 切换点赞失败: no such function: GREATEST
+2025-12-17 12:56:18,177 | INFO | ✅ SQLite连接已关闭
+2025-12-17 12:56:18,179 | INFO | ✅ 数据库连接已关闭
+2025-12-17 12:56:19,907 | INFO | Sanic Extensions:
+2025-12-17 12:56:19,907 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-17 12:56:19,907 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-17 12:56:19,907 | INFO |   > http 
+2025-12-17 12:56:19,907 | INFO |   > templating [jinja2==3.1.2]
+2025-12-17 12:56:19,960 | INFO | 📦 初始化数据库: sqlite
+2025-12-17 12:56:19,961 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-17 12:56:19,975 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-17 12:56:19,978 | INFO | ✅ SQLite数据库已存在，跳过表结构初始化
+2025-12-17 12:56:20,530 | INFO | ✅ 管理员账号配置正确: admin
+2025-12-17 12:56:20,530 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-17 12:58:03,021 | INFO | ✅ SQLite连接已关闭
+2025-12-17 12:58:03,023 | INFO | ✅ 数据库连接已关闭
+2025-12-17 12:58:04,472 | INFO | Sanic Extensions:
+2025-12-17 12:58:04,473 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-17 12:58:04,473 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-17 12:58:04,474 | INFO |   > http 
+2025-12-17 12:58:04,474 | INFO |   > templating [jinja2==3.1.2]
+2025-12-17 12:58:04,526 | INFO | 📦 初始化数据库: sqlite
+2025-12-17 12:58:04,526 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-17 12:58:04,537 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-17 12:58:04,540 | INFO | ✅ SQLite数据库已存在，跳过表结构初始化
+2025-12-17 12:58:05,050 | INFO | ✅ 管理员账号配置正确: admin
+2025-12-17 12:58:05,050 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-17 12:58:11,671 | INFO | ✅ 删除评论成功: comment_id=1
+2025-12-17 12:58:21,518 | INFO | ✅ 创建评论成功: comment_id=2, prompt_id=1
+2025-12-17 12:58:31,062 | INFO | ✅ 创建评论成功: comment_id=3, prompt_id=1
+2025-12-17 14:30:05,910 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:30:05,932 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:30:59,347 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:30:59,348 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:31:24,083 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:31:24,084 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:33:58,562 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:33:58,565 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:39:24,730 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:39:24,736 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:39:27,541 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:39:27,542 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:43:00,530 | INFO | ✅ 创建评论成功: comment_id=4, prompt_id=1
+2025-12-17 14:44:38,270 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:44:38,273 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:44:47,916 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:44:47,916 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:47:09,783 | INFO | ✅ 更新提示词成功: prompt_id=2, user_id=1
+2025-12-17 14:47:16,182 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:47:16,183 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:54:01,438 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:54:01,446 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:56:29,642 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:56:29,650 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:56:34,105 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 14:56:34,105 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:00:44,192 | INFO | ✅ 创建评论成功: comment_id=5, prompt_id=1
+2025-12-17 15:01:07,166 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:01:07,170 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:01:30,389 | INFO | ✅ 删除评论成功: comment_id=5
+2025-12-17 15:01:33,293 | INFO | ✅ 删除评论成功: comment_id=4
+2025-12-17 15:01:35,650 | INFO | ✅ 删除评论成功: comment_id=3
+2025-12-17 15:01:38,126 | INFO | ✅ 删除评论成功: comment_id=2
+2025-12-17 15:04:32,887 | INFO | ✅ 删除操练场分享: user_id=1, share_code=Iuql8kTlQTgd
+2025-12-17 15:04:37,679 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:04:37,679 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:20:44,063 | INFO | ✅ 创建评论成功: comment_id=6, prompt_id=1
+2025-12-17 15:20:53,257 | INFO | ✅ 创建评论成功: comment_id=7, prompt_id=1
+2025-12-17 15:22:48,679 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:22:48,686 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:23:11,579 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:23:11,580 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:23:36,692 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:23:36,693 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:23:40,126 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:23:40,126 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:23:42,245 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:23:42,246 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:23:46,000 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:23:46,001 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:24:11,336 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:24:11,339 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:24:49,135 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:24:49,136 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:25:35,139 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:25:35,140 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:27:18,043 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:27:18,045 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:28:33,781 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:28:33,785 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:28:50,276 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:28:50,278 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:28:54,537 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:28:54,538 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:28:57,860 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:28:57,862 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:01,107 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:01,108 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:02,073 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:02,074 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:03,159 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:03,162 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:04,186 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:04,187 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:05,651 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:05,651 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:06,453 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:06,455 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:08,588 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:08,590 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:09,362 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:09,366 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:12,270 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:12,275 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:13,083 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:13,084 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:21,292 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:21,300 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:22,852 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:22,852 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:23,495 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:23,495 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:23,776 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:23,776 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:24,048 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:24,049 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:24,236 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:24,236 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:24,471 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:24,471 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:24,724 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:24,725 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:24,959 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:24,959 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:25,204 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:25,204 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:25,458 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:25,458 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:25,717 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:25,718 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:26,087 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:26,087 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:42,421 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:29:42,423 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:30:27,619 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:30:27,621 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:38:35,088 | INFO | Received signal SIGINT. Shutting down.
+2025-12-17 15:38:36,704 | INFO | Shutdown interrupted. Killing.
+2025-12-17 15:38:36,712 | INFO | Killing Sanic-Server-0-0 [85975]
+2025-12-17 15:38:36,714 | INFO | Killing Sanic-Reloader-0 [68438]
+2025-12-17 15:38:36,715 | INFO | Received signal SIGINT. Shutting down.
+2025-12-17 15:38:36,828 | INFO | Server Stopped
+2025-12-17 15:42:19,039 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8889                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-17 15:42:22,101 | INFO | Sanic Extensions:
+2025-12-17 15:42:22,101 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-17 15:42:22,102 | INFO |   > openapi [http://0.0.0.0:8889/docs]
+2025-12-17 15:42:22,102 | INFO |   > http 
+2025-12-17 15:42:22,102 | INFO |   > templating [jinja2==3.1.2]
+2025-12-17 15:42:22,367 | INFO | 📦 初始化数据库: sqlite
+2025-12-17 15:42:22,368 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-17 15:42:22,405 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-17 15:42:22,413 | INFO | ✅ SQLite数据库已存在，跳过表结构初始化
+2025-12-17 15:42:23,514 | INFO | ✅ 管理员账号配置正确: admin
+2025-12-17 15:42:23,514 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-17 15:53:52,933 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:53:52,943 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:54:55,110 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:54:55,115 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:55:04,588 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:55:04,597 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:55:15,347 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:55:15,348 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:55:16,994 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:55:16,995 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:55:29,907 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:55:29,909 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:56:03,596 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:56:03,601 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:56:14,767 | INFO | ✅ 删除评论成功: comment_id=7
+2025-12-17 15:56:31,096 | INFO | ✅ 创建评论成功: comment_id=8, prompt_id=1
+2025-12-17 15:57:13,916 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:57:13,920 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:57:18,996 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:57:18,997 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 15:59:05,281 | INFO | ✅ 创建评论成功: comment_id=9, prompt_id=1
+2025-12-17 16:00:33,071 | INFO | ✅ 操练场分享创建成功: user_id=1, share_code=YY2fhKEVl3tD
+2025-12-17 16:00:40,230 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 16:00:40,233 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 16:01:32,431 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 16:01:32,432 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 16:03:54,004 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 16:03:54,009 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 16:05:26,108 | INFO | ✅ 删除评论成功: comment_id=8
+2025-12-17 16:05:28,862 | INFO | ✅ 删除评论成功: comment_id=9
+2025-12-17 16:05:36,177 | INFO | ✅ 创建评论成功: comment_id=10, prompt_id=1
+2025-12-17 16:05:54,599 | INFO | ✅ 删除评论成功: comment_id=10
+2025-12-17 16:05:56,900 | INFO | ✅ 删除评论成功: comment_id=6
+2025-12-17 16:06:02,992 | INFO | ✅ 创建评论成功: comment_id=11, prompt_id=1
+2025-12-17 16:06:08,853 | INFO | ✅ 创建评论成功: comment_id=12, prompt_id=1
+2025-12-17 16:17:29,920 | INFO | ✅ SQLite连接已关闭
+2025-12-17 16:17:29,937 | INFO | ✅ 数据库连接已关闭
+2025-12-17 16:17:31,915 | INFO | Sanic Extensions:
+2025-12-17 16:17:31,915 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-17 16:17:31,915 | INFO |   > openapi [http://0.0.0.0:8889/docs]
+2025-12-17 16:17:31,915 | INFO |   > http 
+2025-12-17 16:17:31,916 | INFO |   > templating [jinja2==3.1.2]
+2025-12-17 16:17:31,963 | INFO | 📦 初始化数据库: sqlite
+2025-12-17 16:17:31,963 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-17 16:17:31,977 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-17 16:17:31,979 | INFO | ✅ SQLite数据库已存在，跳过表结构初始化
+2025-12-17 16:17:32,472 | INFO | ✅ 管理员账号配置正确: admin
+2025-12-17 16:17:32,472 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-17 16:35:01,590 | INFO | ✅ SQLite连接已关闭
+2025-12-17 16:35:01,595 | INFO | ✅ 数据库连接已关闭
+2025-12-17 16:35:03,066 | INFO | Sanic Extensions:
+2025-12-17 16:35:03,067 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-17 16:35:03,067 | INFO |   > openapi [http://0.0.0.0:8889/docs]
+2025-12-17 16:35:03,068 | INFO |   > http 
+2025-12-17 16:35:03,068 | INFO |   > templating [jinja2==3.1.2]
+2025-12-17 16:35:03,116 | INFO | 📦 初始化数据库: sqlite
+2025-12-17 16:35:03,116 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-17 16:35:03,129 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-17 16:35:03,132 | INFO | ✅ SQLite数据库已存在，跳过表结构初始化
+2025-12-17 16:35:03,623 | INFO | ✅ 管理员账号配置正确: admin
+2025-12-17 16:35:03,623 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-17 16:41:46,582 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 16:41:46,590 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 16:41:46,592 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 16:41:46,594 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 16:41:52,005 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 16:41:52,005 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 16:41:52,015 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 16:41:52,019 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 16:42:01,197 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 16:42:01,198 | ERROR | ❌ 获取相关操练场快照失败: no such column: ps.prompt_id
+2025-12-17 16:42:01,201 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 16:42:01,202 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:00:05,344 | INFO | ✅ 删除评论成功: comment_id=11
+2025-12-17 17:00:07,918 | INFO | ✅ 删除评论成功: comment_id=12
+2025-12-17 17:00:13,927 | INFO | ✅ 创建评论成功: comment_id=13, prompt_id=1
+2025-12-17 17:00:23,932 | INFO | ✅ 创建评论成功: comment_id=14, prompt_id=1
+2025-12-17 17:00:33,173 | INFO | ✅ 创建评论成功: comment_id=15, prompt_id=1
+2025-12-17 17:04:08,984 | INFO | ✅ 删除评论成功: comment_id=15
+2025-12-17 17:04:13,618 | INFO | ✅ 删除评论成功: comment_id=13
+2025-12-17 17:05:35,284 | INFO | ✅ 创建评论成功: comment_id=16, prompt_id=1
+2025-12-17 17:05:55,107 | INFO | ✅ 创建评论成功: comment_id=17, prompt_id=1
+2025-12-17 17:06:10,660 | INFO | ✅ 创建评论成功: comment_id=18, prompt_id=1
+2025-12-17 17:17:25,249 | INFO | Received signal SIGINT. Shutting down.
+2025-12-17 17:17:30,310 | INFO | Shutdown interrupted. Killing.
+2025-12-17 17:17:30,313 | INFO | Killing Sanic-Server-0-0 [53772]
+2025-12-17 17:17:30,315 | INFO | Killing Sanic-Reloader-0 [37565]
+2025-12-17 17:17:30,316 | INFO | Received signal SIGINT. Shutting down.
+2025-12-17 17:17:30,374 | INFO | Server Stopped
+2025-12-17 17:17:45,224 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8889                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-17 17:17:47,163 | INFO | Sanic Extensions:
+2025-12-17 17:17:47,164 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-17 17:17:47,164 | INFO |   > openapi [http://0.0.0.0:8889/docs]
+2025-12-17 17:17:47,164 | INFO |   > http 
+2025-12-17 17:17:47,164 | INFO |   > templating [jinja2==3.1.2]
+2025-12-17 17:17:47,210 | INFO | 📦 初始化数据库: sqlite
+2025-12-17 17:17:47,211 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-17 17:17:47,233 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-17 17:17:47,236 | INFO | 📦 SQLite数据库为空，开始初始化...
+2025-12-17 17:17:47,278 | INFO | ✅ SQLite表结构初始化完成
+2025-12-17 17:17:47,523 | INFO | ✅ 默认管理员账号创建成功: admin / admin123
+2025-12-17 17:17:47,524 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-17 17:18:22,217 | INFO | 📝 创建新提示词
+2025-12-17 17:18:22,229 | INFO | ✅ 提示词创建成功: prompt_id=1, user_id=1, title=渲染
+2025-12-17 17:18:22,236 | INFO | ✅ 版本创建成功: prompt_id=1, version=1.0.0
+2025-12-17 17:18:22,236 | INFO | ✅ 初始版本创建成功: version=1.0.0
+2025-12-17 17:18:32,837 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:18:32,842 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:19:13,357 | INFO | ✅ 更新提示词成功: prompt_id=1, user_id=1
+2025-12-17 17:20:05,084 | INFO | ✅ 操练场分享创建成功: user_id=1, share_code=AxmdufpW1AHp
+2025-12-17 17:20:13,070 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:20:13,073 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:20:43,945 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:20:43,948 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:21:08,448 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:21:08,453 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:25:49,030 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:25:49,034 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:30:57,614 | INFO | Received signal SIGINT. Shutting down.
+2025-12-17 17:31:01,370 | INFO | Shutdown interrupted. Killing.
+2025-12-17 17:31:01,370 | INFO | Killing Sanic-Server-0-0 [67827]
+2025-12-17 17:31:01,371 | INFO | Killing Sanic-Reloader-0 [67828]
+2025-12-17 17:31:01,371 | INFO | Received signal SIGINT. Shutting down.
+2025-12-17 17:31:01,464 | INFO | Server Stopped
+2025-12-17 17:31:15,506 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8889                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-17 17:31:17,785 | INFO | Sanic Extensions:
+2025-12-17 17:31:17,785 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-17 17:31:17,785 | INFO |   > openapi [http://0.0.0.0:8889/docs]
+2025-12-17 17:31:17,785 | INFO |   > http 
+2025-12-17 17:31:17,785 | INFO |   > templating [jinja2==3.1.2]
+2025-12-17 17:31:17,832 | INFO | 📦 初始化数据库: sqlite
+2025-12-17 17:31:17,832 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-17 17:31:17,857 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-17 17:31:17,860 | INFO | 📦 SQLite数据库为空，开始初始化...
+2025-12-17 17:31:17,918 | INFO | ✅ SQLite表结构初始化完成
+2025-12-17 17:31:18,172 | INFO | ✅ 默认管理员账号创建成功: admin / admin123
+2025-12-17 17:31:18,172 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-17 17:31:21,325 | INFO | 📤 用户登出: user_id=1
+2025-12-17 17:31:28,560 | INFO | ✅ 本地用户登录成功: username=admin, id=1
+2025-12-17 17:31:28,561 | INFO | ✅ 本地用户登录成功: username=admin, id=1
+2025-12-17 17:32:15,171 | INFO | 📝 创建新提示词
+2025-12-17 17:32:15,190 | INFO | ✅ 提示词创建成功: prompt_id=1, user_id=1, title=渲染
+2025-12-17 17:32:15,203 | INFO | ✅ 版本创建成功: prompt_id=1, version=1.0.0
+2025-12-17 17:32:15,205 | INFO | ✅ 初始版本创建成功: version=1.0.0
+2025-12-17 17:32:24,740 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:32:24,742 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:33:41,316 | INFO | ✅ 操练场分享创建成功: user_id=1, share_code=9kcguREEHKYC
+2025-12-17 17:33:45,275 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:33:45,281 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:34:13,604 | INFO | ✅ SQLite连接已关闭
+2025-12-17 17:34:13,604 | INFO | ✅ 数据库连接已关闭
+2025-12-17 17:34:14,807 | INFO | Sanic Extensions:
+2025-12-17 17:34:14,807 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-17 17:34:14,807 | INFO |   > openapi [http://0.0.0.0:8889/docs]
+2025-12-17 17:34:14,808 | INFO |   > http 
+2025-12-17 17:34:14,808 | INFO |   > templating [jinja2==3.1.2]
+2025-12-17 17:34:14,861 | INFO | 📦 初始化数据库: sqlite
+2025-12-17 17:34:14,861 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-17 17:34:14,870 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-17 17:34:14,872 | INFO | ✅ SQLite数据库已存在，跳过表结构初始化
+2025-12-17 17:34:15,408 | INFO | ✅ 管理员账号配置正确: admin
+2025-12-17 17:34:15,408 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-17 17:34:48,687 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:34:48,688 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:36:04,396 | INFO | 📤 用户登出: user_id=1
+2025-12-17 17:36:23,885 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:36:23,890 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:36:43,784 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:36:43,788 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:37:23,737 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:37:23,753 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:44:55,889 | INFO | ✅ 本地用户登录成功: username=admin, id=1
+2025-12-17 17:44:55,892 | INFO | ✅ 本地用户登录成功: username=admin, id=1
+2025-12-17 17:45:02,393 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:45:02,395 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:45:32,796 | ERROR | ❌ 创建评论失败: table prompt_comments has no column named parent_id
+2025-12-17 17:45:32,812 | ERROR | ❌ 创建评论失败: table prompt_comments has no column named parent_id
+2025-12-17 17:45:37,081 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:45:37,083 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:45:44,017 | ERROR | ❌ 创建评论失败: table prompt_comments has no column named parent_id
+2025-12-17 17:45:44,018 | ERROR | ❌ 创建评论失败: table prompt_comments has no column named parent_id
+2025-12-17 17:46:01,036 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:46:01,041 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:46:14,646 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:46:14,647 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:46:58,967 | INFO | Received signal SIGINT. Shutting down.
+2025-12-17 17:47:02,359 | INFO | Shutdown interrupted. Killing.
+2025-12-17 17:47:02,361 | INFO | Killing Sanic-Server-0-0 [73784]
+2025-12-17 17:47:02,362 | INFO | Killing Sanic-Reloader-0 [72551]
+2025-12-17 17:47:02,363 | INFO | Received signal SIGINT. Shutting down.
+2025-12-17 17:47:02,394 | INFO | Server Stopped
+2025-12-17 17:47:16,478 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8889                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-17 17:47:18,411 | INFO | Sanic Extensions:
+2025-12-17 17:47:18,411 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-17 17:47:18,411 | INFO |   > openapi [http://0.0.0.0:8889/docs]
+2025-12-17 17:47:18,412 | INFO |   > http 
+2025-12-17 17:47:18,412 | INFO |   > templating [jinja2==3.1.2]
+2025-12-17 17:47:18,457 | INFO | 📦 初始化数据库: sqlite
+2025-12-17 17:47:18,458 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-17 17:47:18,476 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-17 17:47:18,478 | INFO | 📦 SQLite数据库为空，开始初始化...
+2025-12-17 17:47:18,519 | INFO | ✅ SQLite表结构初始化完成
+2025-12-17 17:47:18,764 | INFO | ✅ 默认管理员账号创建成功: admin / admin123
+2025-12-17 17:47:18,764 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-17 17:47:39,391 | INFO | 📝 创建新提示词
+2025-12-17 17:47:39,406 | INFO | ✅ 提示词创建成功: prompt_id=1, user_id=1, title=渲染
+2025-12-17 17:47:39,444 | INFO | ✅ 版本创建成功: prompt_id=1, version=1.0.0
+2025-12-17 17:47:39,444 | INFO | ✅ 初始版本创建成功: version=1.0.0
+2025-12-17 17:47:50,975 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:47:50,977 | ERROR | ❌ 获取评论列表失败: no such column: c.parent_id
+2025-12-17 17:48:01,814 | ERROR | ❌ 创建评论失败: table prompt_comments has no column named parent_id
+2025-12-17 17:48:01,816 | ERROR | ❌ 创建评论失败: table prompt_comments has no column named parent_id
+2025-12-17 17:52:17,517 | INFO | Received signal SIGINT. Shutting down.
+2025-12-17 17:52:17,531 | INFO | ✅ SQLite连接已关闭
+2025-12-17 17:52:17,533 | INFO | ✅ 数据库连接已关闭
+2025-12-17 17:52:17,934 | INFO | Server Stopped
+2025-12-17 17:52:23,326 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8889                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-17 17:52:25,534 | INFO | Sanic Extensions:
+2025-12-17 17:52:25,534 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-17 17:52:25,535 | INFO |   > openapi [http://0.0.0.0:8889/docs]
+2025-12-17 17:52:25,535 | INFO |   > http 
+2025-12-17 17:52:25,535 | INFO |   > templating [jinja2==3.1.2]
+2025-12-17 17:52:25,581 | INFO | 📦 初始化数据库: sqlite
+2025-12-17 17:52:25,581 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-17 17:52:25,590 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-17 17:52:25,591 | INFO | 📦 SQLite数据库为空，开始初始化...
+2025-12-17 17:52:25,644 | INFO | ✅ SQLite表结构初始化完成
+2025-12-17 17:52:25,892 | INFO | ✅ 默认管理员账号创建成功: admin / admin123
+2025-12-17 17:52:25,892 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-17 17:53:00,173 | INFO | 📝 创建新提示词
+2025-12-17 17:53:00,184 | INFO | ✅ 提示词创建成功: prompt_id=1, user_id=1, title=渲染
+2025-12-17 17:53:00,199 | INFO | ✅ 版本创建成功: prompt_id=1, version=1.0.0
+2025-12-17 17:53:00,199 | INFO | ✅ 初始版本创建成功: version=1.0.0
+2025-12-17 17:53:21,141 | INFO | ✅ 创建评论成功: comment_id=1, prompt_id=1
+2025-12-17 17:53:26,787 | INFO | ✅ 创建评论成功: comment_id=2, prompt_id=1
+2025-12-17 17:55:02,088 | INFO | ✅ 更新提示词成功: prompt_id=1, user_id=1
+2025-12-17 17:57:36,220 | INFO | ✅ 操练场分享创建成功: user_id=1, share_code=1M3M_1rnLTjZ
+2025-12-17 18:00:24,939 | INFO | 📝 创建新提示词
+2025-12-17 18:00:24,971 | INFO | ✅ 提示词创建成功: prompt_id=2, user_id=1, title=宠物狗
+2025-12-17 18:00:24,985 | INFO | ✅ 版本创建成功: prompt_id=2, version=1.0.0
+2025-12-17 18:00:24,985 | INFO | ✅ 初始版本创建成功: version=1.0.0
+2025-12-17 18:00:37,791 | INFO | ✅ 更新提示词成功: prompt_id=1, user_id=1
+2025-12-17 18:02:20,211 | INFO | ✅ SQLite连接已关闭
+2025-12-17 18:02:20,233 | INFO | ✅ 数据库连接已关闭
+2025-12-17 18:02:22,143 | INFO | Sanic Extensions:
+2025-12-17 18:02:22,144 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-17 18:02:22,144 | INFO |   > openapi [http://0.0.0.0:8889/docs]
+2025-12-17 18:02:22,144 | INFO |   > http 
+2025-12-17 18:02:22,144 | INFO |   > templating [jinja2==3.1.2]
+2025-12-17 18:02:22,207 | INFO | 📦 初始化数据库: sqlite
+2025-12-17 18:02:22,207 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-17 18:02:22,221 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-17 18:02:22,222 | INFO | ✅ SQLite数据库已存在，跳过表结构初始化
+2025-12-17 18:02:22,880 | INFO | ✅ 管理员账号配置正确: admin
+2025-12-17 18:02:22,880 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-17 18:14:50,489 | INFO | ✅ 删除评论成功: comment_id=1, 级联删除 2 条
+2025-12-17 18:29:42,533 | INFO | Created user AI config successfully: user_id=1
+2025-12-17 18:30:07,837 | INFO | Updated user AI config successfully: user_id=1
+2025-12-17 18:30:09,627 | INFO | Updated user AI config successfully: user_id=1
+2025-12-17 18:30:13,029 | INFO | Updated user AI config successfully: user_id=1
+2025-12-17 18:30:14,979 | INFO | Updated user AI config successfully: user_id=1
+2025-12-17 18:31:30,961 | INFO | 📝 创建新提示词
+2025-12-17 18:31:30,988 | INFO | ✅ 提示词创建成功: prompt_id=3, user_id=1, title=牙疼
+2025-12-17 18:31:31,000 | INFO | ✅ 版本创建成功: prompt_id=3, version=1.0.0
+2025-12-17 18:31:31,001 | INFO | ✅ 初始版本创建成功: version=1.0.0
+2025-12-17 19:06:27,766 | INFO | ✅ 更新提示词成功: prompt_id=1, user_id=1
+2025-12-18 11:34:11,474 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8888                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-18 11:34:13,518 | INFO | Sanic Extensions:
+2025-12-18 11:34:13,519 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-18 11:34:13,519 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-18 11:34:13,519 | INFO |   > http 
+2025-12-18 11:34:13,519 | INFO |   > templating [jinja2==3.1.2]
+2025-12-18 11:34:13,572 | INFO | 📦 初始化数据库: sqlite
+2025-12-18 11:34:13,573 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-18 11:34:13,591 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-18 11:34:13,595 | INFO | ✅ SQLite数据库已存在，跳过表结构初始化
+2025-12-18 11:34:13,852 | ERROR | ❌ 同步管理员账号失败: database disk image is malformed
+2025-12-18 11:34:13,853 | ERROR | ❌ SQLite数据库初始化检查失败: database disk image is malformed
+2025-12-18 11:34:13,854 | INFO | Killing Sanic-Server-0-0 [90821]
+2025-12-18 11:34:13,854 | INFO | Killing Sanic-Reloader-0 [90822]
+2025-12-18 11:34:13,854 | INFO | Server Stopped
+2025-12-18 11:34:42,802 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8888                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-18 11:34:44,688 | INFO | Sanic Extensions:
+2025-12-18 11:34:44,688 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-18 11:34:44,688 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-18 11:34:44,688 | INFO |   > http 
+2025-12-18 11:34:44,688 | INFO |   > templating [jinja2==3.1.2]
+2025-12-18 11:34:44,737 | INFO | 📦 初始化数据库: sqlite
+2025-12-18 11:34:44,738 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-18 11:34:44,744 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-18 11:34:44,746 | INFO | ✅ SQLite数据库已存在，跳过表结构初始化
+2025-12-18 11:34:44,995 | ERROR | ❌ 同步管理员账号失败: database disk image is malformed
+2025-12-18 11:34:44,995 | ERROR | ❌ SQLite数据库初始化检查失败: database disk image is malformed
+2025-12-18 11:34:44,995 | INFO | Killing Sanic-Server-0-0 [90965]
+2025-12-18 11:34:44,996 | INFO | Killing Sanic-Reloader-0 [90966]
+2025-12-18 11:34:44,996 | INFO | Server Stopped
+2025-12-18 11:35:16,909 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8888                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-18 11:35:18,755 | INFO | Sanic Extensions:
+2025-12-18 11:35:18,755 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-18 11:35:18,755 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-18 11:35:18,755 | INFO |   > http 
+2025-12-18 11:35:18,756 | INFO |   > templating [jinja2==3.1.2]
+2025-12-18 11:35:18,803 | INFO | 📦 初始化数据库: sqlite
+2025-12-18 11:35:18,803 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-18 11:35:18,823 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-18 11:35:18,826 | INFO | 📦 SQLite数据库为空，开始初始化...
+2025-12-18 11:35:18,873 | INFO | ✅ SQLite表结构初始化完成
+2025-12-18 11:35:19,122 | INFO | ✅ 默认管理员账号创建成功: admin / admin123
+2025-12-18 11:35:19,122 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-18 11:36:11,840 | INFO | Received signal SIGINT. Shutting down.
+2025-12-18 11:36:11,844 | INFO | ✅ SQLite连接已关闭
+2025-12-18 11:36:11,845 | INFO | ✅ 数据库连接已关闭
+2025-12-18 11:36:12,450 | INFO | Shutdown interrupted. Killing.
+2025-12-18 11:36:12,450 | INFO | Killing Sanic-Server-0-0 [91121]
+2025-12-18 11:36:12,450 | INFO | Killing Sanic-Reloader-0 [91122]
+2025-12-18 11:36:12,450 | INFO | Received signal SIGINT. Shutting down.
+2025-12-18 11:36:12,461 | INFO | Server Stopped
+2025-12-18 11:36:31,324 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8888                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-18 11:36:33,189 | INFO | Sanic Extensions:
+2025-12-18 11:36:33,189 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-18 11:36:33,189 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-18 11:36:33,189 | INFO |   > http 
+2025-12-18 11:36:33,189 | INFO |   > templating [jinja2==3.1.2]
+2025-12-18 11:36:33,232 | INFO | 📦 初始化数据库: sqlite
+2025-12-18 11:36:33,232 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-18 11:36:33,241 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-18 11:36:33,242 | INFO | 📦 SQLite数据库为空，开始初始化...
+2025-12-18 11:36:33,289 | INFO | ✅ SQLite表结构初始化完成
+2025-12-18 11:36:33,534 | INFO | ✅ 默认管理员账号创建成功: admin / admin123
+2025-12-18 11:36:33,534 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-18 11:37:41,628 | INFO | Received signal SIGINT. Shutting down.
+2025-12-18 11:37:41,640 | INFO | ✅ SQLite连接已关闭
+2025-12-18 11:37:41,641 | INFO | ✅ 数据库连接已关闭
+2025-12-18 11:37:42,468 | INFO | Server Stopped
+2025-12-18 11:37:42,547 | INFO | Shutdown interrupted. Killing.
+2025-12-18 11:37:42,547 | INFO | Killing Sanic-Server-0-0 [91471]
+2025-12-18 11:37:42,548 | INFO | Killing Sanic-Reloader-0 [91472]
+2025-12-18 11:37:42,548 | INFO | Received signal SIGINT. Shutting down.
+2025-12-18 11:39:05,636 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8888                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-18 11:39:07,778 | INFO | Sanic Extensions:
+2025-12-18 11:39:07,778 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-18 11:39:07,778 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-18 11:39:07,778 | INFO |   > http 
+2025-12-18 11:39:07,779 | INFO |   > templating [jinja2==3.1.2]
+2025-12-18 11:39:07,823 | INFO | 📦 初始化数据库: sqlite
+2025-12-18 11:39:07,823 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-18 11:39:07,842 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-18 11:39:07,846 | INFO | ✅ SQLite数据库已存在，跳过表结构初始化
+2025-12-18 11:39:08,342 | INFO | ✅ 管理员账号配置正确: admin
+2025-12-18 11:39:08,342 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-18 11:41:50,726 | INFO | ✅ 本地用户登录成功: username=admin, id=1
+2025-12-18 11:41:50,729 | INFO | ✅ 本地用户登录成功: username=admin, id=1
+2025-12-18 11:42:25,409 | INFO | 📝 创建新提示词
+2025-12-18 11:42:25,419 | INFO | ✅ 提示词创建成功: prompt_id=1, user_id=1, title=提示词_2025/12/18
+2025-12-18 11:42:25,425 | INFO | ✅ 版本创建成功: prompt_id=1, version=1.0.0
+2025-12-18 11:42:25,425 | INFO | ✅ 初始版本创建成功: version=1.0.0
+2025-12-18 11:42:35,150 | INFO | 📝 创建新提示词
+2025-12-18 11:42:35,155 | INFO | ✅ 提示词创建成功: prompt_id=2, user_id=1, title=提示词_2025/12/18
+2025-12-18 11:42:35,161 | INFO | ✅ 版本创建成功: prompt_id=2, version=1.0.0
+2025-12-18 11:42:35,161 | INFO | ✅ 初始版本创建成功: version=1.0.0
+2025-12-18 11:42:42,803 | INFO | 📝 创建新提示词
+2025-12-18 11:42:42,809 | INFO | ✅ 提示词创建成功: prompt_id=3, user_id=1, title=提示词_2025/12/18
+2025-12-18 11:42:42,814 | INFO | ✅ 版本创建成功: prompt_id=3, version=1.0.0
+2025-12-18 11:42:42,815 | INFO | ✅ 初始版本创建成功: version=1.0.0
+2025-12-18 11:44:48,253 | INFO | 📤 用户登出: user_id=1
+2025-12-18 11:45:30,891 | INFO | ✅ 本地用户创建成功: username=demo, id=2
+2025-12-18 11:45:30,892 | INFO | ✅ 本地用户注册成功: username=demo, id=2
+2025-12-18 11:45:40,329 | WARNING | ⚠️  密码错误: username=demo
+2025-12-18 11:45:46,576 | INFO | ✅ 本地用户登录成功: username=demo, id=2
+2025-12-18 11:45:46,577 | INFO | ✅ 本地用户登录成功: username=demo, id=2
+2025-12-18 11:53:53,258 | INFO | ✅ SQLite连接已关闭
+2025-12-18 11:53:53,260 | INFO | ✅ 数据库连接已关闭
+2025-12-18 11:53:54,772 | INFO | Sanic Extensions:
+2025-12-18 11:53:54,773 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-18 11:53:54,773 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-18 11:53:54,773 | INFO |   > http 
+2025-12-18 11:53:54,773 | INFO |   > templating [jinja2==3.1.2]
+2025-12-18 11:53:54,834 | INFO | 📦 初始化数据库: sqlite
+2025-12-18 11:53:54,846 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-18 11:53:54,861 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-18 11:53:54,886 | INFO | ✅ SQLite数据库已存在，跳过表结构初始化
+2025-12-18 11:53:55,497 | INFO | ✅ 管理员账号配置正确: admin
+2025-12-18 11:53:55,497 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-18 12:20:36,103 | INFO | Received signal SIGINT. Shutting down.
+2025-12-18 12:20:38,074 | INFO | Shutdown interrupted. Killing.
+2025-12-18 12:20:38,075 | INFO | Killing Sanic-Server-0-0 [97008]
+2025-12-18 12:20:38,075 | INFO | Killing Sanic-Reloader-0 [92185]
+2025-12-18 12:20:38,076 | INFO | Received signal SIGINT. Shutting down.
+2025-12-18 12:20:38,101 | INFO | Server Stopped
+2025-12-18 12:38:11,559 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8888                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-18 12:38:13,419 | INFO | Sanic Extensions:
+2025-12-18 12:38:13,419 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-18 12:38:13,419 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-18 12:38:13,419 | INFO |   > http 
+2025-12-18 12:38:13,419 | INFO |   > templating [jinja2==3.1.2]
+2025-12-18 12:38:13,463 | INFO | 📦 初始化数据库: sqlite
+2025-12-18 12:38:13,463 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-18 12:38:13,487 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-18 12:38:13,490 | INFO | 📦 SQLite数据库为空，开始初始化...
+2025-12-18 12:38:13,541 | INFO | ✅ SQLite表结构初始化完成
+2025-12-18 12:38:13,789 | INFO | ✅ 默认管理员账号创建成功: admin / admin123
+2025-12-18 12:38:13,789 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-18 12:38:18,614 | INFO | Received signal SIGINT. Shutting down.
+2025-12-18 12:38:18,616 | INFO | ✅ SQLite连接已关闭
+2025-12-18 12:38:18,616 | INFO | ✅ 数据库连接已关闭
+2025-12-18 12:38:19,302 | INFO | Shutdown interrupted. Killing.
+2025-12-18 12:38:19,302 | INFO | Killing Sanic-Server-0-0 [17565]
+2025-12-18 12:38:19,303 | INFO | Killing Sanic-Reloader-0 [17566]
+2025-12-18 12:38:19,303 | INFO | Received signal SIGINT. Shutting down.
+2025-12-18 12:38:19,339 | INFO | Server Stopped
+2025-12-18 18:38:36,126 | INFO | 
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                                             Sanic v23.12.1                                             │
+  │                                    Goin' Fast @ http://0.0.0.0:8888                                    │
+  ├───────────────────────┬────────────────────────────────────────────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │         app: apps                                                              │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │        mode: production, single worker                                         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │      server: sanic, HTTP/1.1                                                   │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │      python: 3.10.10                                                           │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │    platform: macOS-14.4-x86_64-i386-64bit                                      │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │ auto-reload: enabled, /Users/macbookpro/Desktop/提词管家/YPrompt/backend/templates │
+  │ [48;2;255;13;104m                     [0m │    packages: sanic-routing==23.12.0, sanic-ext==23.12.0                        │
+  │ Build Fast. Run Fast. │                                                                                │
+  └───────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+
+2025-12-18 18:38:38,560 | INFO | Sanic Extensions:
+2025-12-18 18:38:38,560 | INFO |   > injection [0 dependencies; 0 constants]
+2025-12-18 18:38:38,560 | INFO |   > openapi [http://0.0.0.0:8888/docs]
+2025-12-18 18:38:38,560 | INFO |   > http 
+2025-12-18 18:38:38,560 | INFO |   > templating [jinja2==3.1.2]
+2025-12-18 18:38:38,612 | INFO | 📦 初始化数据库: sqlite
+2025-12-18 18:38:38,612 | INFO | 📁 SQLite数据库路径: ../data/yprompt.db
+2025-12-18 18:38:38,644 | INFO | ✅ SQLite连接成功: ../data/yprompt.db
+2025-12-18 18:38:38,648 | INFO | ✅ SQLite数据库已存在，跳过表结构初始化
+2025-12-18 18:38:39,031 | INFO | ✅ 管理员账号创建成功: admin / admin123
+2025-12-18 18:38:39,032 | INFO | ✅ 数据库初始化成功: sqlite
+2025-12-18 18:38:53,278 | INFO | ✅ 本地用户登录成功: username=admin, id=40
+2025-12-18 18:38:53,280 | INFO | ✅ 本地用户登录成功: username=admin, id=40
+2025-12-18 18:39:26,637 | INFO | Received signal SIGINT. Shutting down.
+2025-12-18 18:39:36,985 | INFO | Server Stopped

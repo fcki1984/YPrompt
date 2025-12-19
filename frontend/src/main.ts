@@ -58,6 +58,18 @@ const router = createRouter({
       path: '/library',
       name: 'library',
       component: () => import('./components/modules/LibraryModule.vue')
+    },
+    {
+      path: '/community',
+      name: 'community',
+      component: () => import('./views/CommunityView.vue'),
+      meta: { public: true }
+    },
+    {
+      path: '/community/prompts/:id',
+      name: 'prompt-detail',
+      component: () => import('./views/PromptDetailView.vue'),
+      meta: { public: true }
     }
   ]
 })

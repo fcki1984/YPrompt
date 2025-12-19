@@ -4,7 +4,7 @@
     <DesktopSidebar />
     
     <!-- 主内容区域 -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
       <router-view />
     </div>
   </div>

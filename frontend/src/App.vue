@@ -46,6 +46,9 @@ onMounted(async () => {
   // 初始化认证状态
   await authStore.initialize()
   
+  // 检查社区功能是否启用
+  await navigationStore.checkCommunityFeature()
+  
   // 初始化AI配置（从云端或localStorage加载）
   await settingsStore.loadSettings()
   

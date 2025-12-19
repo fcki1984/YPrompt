@@ -71,7 +71,8 @@ const iconMap: Record<string, string> = {
   '🏠': 'home',
   '⚡': 'sparkles',
   '🎯': 'beaker',
-  '📚': 'collection'
+  '📚': 'collection',
+  '👥': 'users'
 }
 
 const getIconName = (emoji: string): string => {

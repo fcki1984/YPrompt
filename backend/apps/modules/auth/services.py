@@ -52,28 +52,35 @@ class AuthService:
             avatar_template = user_info.get('avatar_template', '')
             avatar = avatar_template.replace('{size}', '240') if avatar_template and '{size}' in avatar_template else avatar_template
             
+            # 确保 name 字段不为空：优先使用 name，其次 username，最后使用 linux_do_username
+            name = user_info.get('name') or user_info.get('username') or user_info.get('linux_do_username', '未知用户')
+            linux_do_username = user_info.get('username', '')
+            
             if user:
-                # 2. 用户存在,更新用户信息和登录时间
-                update_sql = f"""
+                # 2. 用户存在,更新用户信息和登录时间（使用参数化查询）
+                update_sql = """
                     UPDATE users SET 
-                        name = '{user_info.get("name", user_info.get("username", "未知用户"))}',
-                        linux_do_username = '{user_info.get("username", "")}',
-                        avatar = '{avatar}',
-                        last_login_time = '{current_time}'
-                    WHERE linux_do_id = '{linux_do_id}'
+                        name = ?,
+                        linux_do_username = ?,
+                        avatar = ?,
+                        last_login_time = ?
+                    WHERE linux_do_id = ?
                 """
                 
-                await self.db.execute(update_sql)
+                await self.db.execute(update_sql, [name, linux_do_username, avatar, current_time, linux_do_id])
                 
                 # 重新查询用户信息
                 sql = "SELECT * FROM users WHERE linux_do_id = ?"
                 return await self.db.get(sql, [linux_do_id])
             else:
                 # 3. 用户不存在,创建新用户
+                # 确保 name 字段不为空：优先使用 name，其次 username，最后使用 linux_do_username
+                name = user_info.get('name') or user_info.get('username') or user_info.get('linux_do_username', '未知用户')
+                
                 fields = {
                     'linux_do_id': linux_do_id,
                     'linux_do_username': user_info.get('username', ''),
-                    'name': user_info.get('name', user_info.get('username', '未知用户')),
+                    'name': name,
                     'avatar': avatar,
                     'auth_type': 'linux_do',
                     'is_active': 1 if user_info.get('active', True) else 0,
@@ -120,7 +127,7 @@ class AuthService:
         Args:
             username: 用户名
             password: 明文密码
-            name: 显示名称(可选,默认为用户名)
+            name: 显示名称(可选,默认使用用户名)
             
         Returns:
             dict: 用户信息
@@ -137,11 +144,12 @@ class AuthService:
             password_hash = PasswordUtil.hash_password(password)
             
             # 3. 创建用户
+            # 确保 name 字段不为空：如果未提供 name，使用 username 作为默认值
             current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             fields = {
                 'username': username,
                 'password_hash': password_hash,
-                'name': name or username,
+                'name': name if name else username,  # 默认使用 username
                 'auth_type': 'local',
                 'is_active': 1,
                 'last_login_time': current_time

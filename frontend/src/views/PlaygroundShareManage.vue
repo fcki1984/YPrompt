@@ -4,7 +4,7 @@
       <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h1 class="text-xl lg:text-2xl font-bold text-gray-900">我的分享</h1>
-          <p class="text-sm text-gray-500">管理操练场分享链接，随时复制或撤销</p>
+          <p class="text-sm text-gray-500">管理演练分享链接，随时复制或撤销</p>
         </div>
         <div class="flex items-center gap-2 flex-wrap">
           <button
@@ -21,13 +21,14 @@
       <div class="bg-white rounded-lg shadow-sm p-4 h-full overflow-y-auto">
         <div v-if="isLoading" class="text-center text-gray-500 py-10">加载中...</div>
         <div v-else-if="shares.length === 0" class="text-center text-gray-500 py-10">
-          暂无分享，前往操练场生成一个吧。
+          暂无分享，前往演练生成一个吧。
         </div>
-        <div v-else class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div v-else class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <div
             v-for="share in shares"
             :key="share.share_code"
-            class="border border-gray-100 rounded-2xl p-4 flex flex-col gap-3 shadow-[0_6px_18px_rgba(15,23,42,0.06)]"
+            class="border border-gray-100 rounded-2xl p-4 flex flex-col gap-3 shadow-[0_6px_18px_rgba(15,23,42,0.06)] hover:border-blue-200 transition-colors cursor-pointer"
+            @click="navigateToShare(share.share_code)"
           >
             <div class="space-y-2">
               <div class="flex items-center gap-2 flex-wrap">
@@ -63,19 +64,19 @@
             <div class="flex flex-wrap gap-2 mt-auto">
               <button
                 class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs hover:bg-blue-100"
-                @click="copyShareLink(share)"
+                @click.stop="copyShareLink(share)"
               >
                 复制链接
               </button>
               <button
                 class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-700 hover:bg-gray-50"
-                @click="openEditModal(share)"
+                @click.stop="openEditModal(share)"
               >
                 编辑设置
               </button>
               <button
                 class="px-3 py-1.5 border border-red-100 text-red-600 rounded-lg text-xs hover:bg-red-50"
-                @click="deleteShare(share)"
+                @click.stop="deleteShare(share)"
               >
                 删除
               </button>
@@ -96,6 +97,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import PlaygroundShareSettingsModal from '@/components/playground/PlaygroundShareSettingsModal.vue'
 import {
   getMyPlaygroundShares,
@@ -105,6 +107,7 @@ import {
 import { copyToClipboard } from '@/utils/clipboardUtils'
 import { useNotificationStore } from '@/stores/notificationStore'
 
+const router = useRouter()
 const shares = ref<PlaygroundShareListItem[]>([])
 const isLoading = ref(true)
 const editingShare = ref<PlaygroundShareListItem | null>(null)
@@ -122,6 +125,10 @@ const fetchShares = async () => {
   } finally {
     isLoading.value = false
   }
+}
+
+const navigateToShare = (shareCode: string) => {
+  router.push(`/playground/share/${shareCode}`)
 }
 
 const copyShareLink = async (share: PlaygroundShareListItem) => {

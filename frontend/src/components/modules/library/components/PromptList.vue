@@ -30,17 +30,30 @@
       </div>
 
       <!-- 提示词卡片列表 -->
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div
           v-for="prompt in prompts"
           :key="prompt.id"
-          class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+          class="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow cursor-pointer flex flex-col"
+          style="min-height: 280px;"
           @click="handleViewPrompt(prompt)"
         >
           <!-- 头部：标题和类型标签 -->
           <div class="flex items-start justify-between gap-3 mb-3">
             <div class="flex-1 min-w-0">
-              <h3 class="text-base font-medium text-gray-900 truncate mb-1">{{ prompt.title }}</h3>
+              <div class="flex items-center gap-2 mb-2">
+                <h3 class="text-base font-semibold text-gray-900 truncate">{{ prompt.title }}</h3>
+                <!-- 公开/私有标签 -->
+                <span 
+                  :class="prompt.is_public 
+                    ? 'bg-green-100 text-green-700 border-green-200' 
+                    : 'bg-gray-100 text-gray-600 border-gray-200'"
+                  class="px-1.5 py-0.5 text-xs font-medium rounded border flex-shrink-0"
+                  :title="prompt.is_public ? '公开 - 所有人可见' : '私有 - 仅自己可见'"
+                >
+                  {{ prompt.is_public ? '公开' : '私有' }}
+                </span>
+              </div>
               <p class="text-sm text-gray-600 line-clamp-2 h-10">{{ prompt.description || '暂无描述' }}</p>
             </div>
             <!-- 提示词类型标签（固定右端） -->
@@ -55,10 +68,10 @@
           </div>
 
           <!-- 内容预览 -->
-          <div class="text-sm text-gray-700 mb-3 p-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-md border border-gray-200">
-            <div class="line-clamp-2 h-10 font-mono text-xs leading-relaxed">
+          <div class="text-sm text-gray-700 mb-4 flex-1 p-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-md border border-gray-200 overflow-hidden">
+            <div class="line-clamp-3 font-mono text-xs leading-relaxed">
               <span v-if="prompt.final_prompt">
-                {{ prompt.final_prompt.slice(0, 150) }}{{ prompt.final_prompt.length > 150 ? '...' : '' }}
+                {{ prompt.final_prompt.slice(0, 120) }}{{ prompt.final_prompt.length > 120 ? '...' : '' }}
               </span>
               <span v-else class="text-gray-400 italic">
                 暂无提示词内容
@@ -547,9 +560,20 @@ const handleDeletePrompt = async (prompt: Prompt) => {
   }
 }
 
-// 格式化日期
+// 格式化日期（自动处理时区）
 const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
+  if (!dateString) return ''
+  
+  // 如果后端返回的是UTC时间，需要转换为本地时间
+  let date: Date
+  if (dateString.endsWith('Z') || dateString.includes('+')) {
+    // ISO格式，直接解析
+    date = new Date(dateString)
+  } else {
+    // 假设是UTC时间字符串，添加Z后缀
+    date = new Date(dateString + 'Z')
+  }
+  
   return date.toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: '2-digit',

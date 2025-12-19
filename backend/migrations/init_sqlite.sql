@@ -100,6 +100,9 @@ CREATE TABLE IF NOT EXISTS prompts (
   -- 统计信息
   view_count INTEGER DEFAULT 0,
   use_count INTEGER DEFAULT 0,
+  like_count INTEGER DEFAULT 0,
+  comment_count INTEGER DEFAULT 0,
+  hot_score REAL DEFAULT 0.0,
   
   -- 标签 (逗号分隔)
   tags VARCHAR(500) DEFAULT NULL,
@@ -305,6 +308,7 @@ END;
 CREATE TABLE IF NOT EXISTS playground_shares (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
+  prompt_id INTEGER DEFAULT NULL,
   share_code VARCHAR(64) NOT NULL,
   title VARCHAR(200) DEFAULT NULL,
   system_prompt TEXT DEFAULT NULL,
@@ -321,11 +325,13 @@ CREATE TABLE IF NOT EXISTS playground_shares (
   is_active INTEGER DEFAULT 1,
   create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
   update_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (prompt_id) REFERENCES prompts(id) ON DELETE SET NULL
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS uk_playground_share_code ON playground_shares(share_code);
 CREATE INDEX IF NOT EXISTS idx_playground_share_user ON playground_shares(user_id);
+CREATE INDEX IF NOT EXISTS idx_playground_share_prompt ON playground_shares(prompt_id);
 
 CREATE TRIGGER IF NOT EXISTS update_playground_shares_timestamp 
 AFTER UPDATE ON playground_shares
@@ -333,3 +339,73 @@ FOR EACH ROW
 BEGIN
   UPDATE playground_shares SET update_time = CURRENT_TIMESTAMP WHERE id = OLD.id;
 END;
+
+-- ==========================================
+-- 社区功能 - 大厅、点赞、评论
+-- ==========================================
+
+-- 提示词点赞表
+CREATE TABLE IF NOT EXISTS prompt_likes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  prompt_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+  
+  FOREIGN KEY (prompt_id) REFERENCES prompts(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS uk_prompt_like ON prompt_likes(prompt_id, user_id);
+CREATE INDEX IF NOT EXISTS idx_likes_prompt_id ON prompt_likes(prompt_id);
+CREATE INDEX IF NOT EXISTS idx_likes_user_id ON prompt_likes(user_id);
+CREATE INDEX IF NOT EXISTS idx_likes_create_time ON prompt_likes(create_time);
+
+-- 提示词评论表
+CREATE TABLE IF NOT EXISTS prompt_comments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  prompt_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  parent_id INTEGER DEFAULT NULL,
+  
+  content TEXT NOT NULL,
+  
+  -- 评论状态
+  is_edited INTEGER DEFAULT 0,
+  is_deleted INTEGER DEFAULT 0,
+  
+  create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+  update_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+  
+  FOREIGN KEY (prompt_id) REFERENCES prompts(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (parent_id) REFERENCES prompt_comments(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_comments_prompt_id ON prompt_comments(prompt_id);
+CREATE INDEX IF NOT EXISTS idx_comments_user_id ON prompt_comments(user_id);
+CREATE INDEX IF NOT EXISTS idx_comments_parent_id ON prompt_comments(parent_id);
+CREATE INDEX IF NOT EXISTS idx_comments_create_time ON prompt_comments(create_time);
+CREATE INDEX IF NOT EXISTS idx_comments_is_deleted ON prompt_comments(is_deleted);
+
+CREATE TRIGGER IF NOT EXISTS update_prompt_comments_timestamp 
+AFTER UPDATE ON prompt_comments
+FOR EACH ROW
+BEGIN
+  UPDATE prompt_comments SET update_time = CURRENT_TIMESTAMP WHERE id = OLD.id;
+END;
+
+-- 提示词访问足迹表（记录访问用户）
+CREATE TABLE IF NOT EXISTS prompt_visits (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  prompt_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  visit_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+  
+  FOREIGN KEY (prompt_id) REFERENCES prompts(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_visits_prompt_id ON prompt_visits(prompt_id);
+CREATE INDEX IF NOT EXISTS idx_visits_user_id ON prompt_visits(user_id);
+CREATE INDEX IF NOT EXISTS idx_visits_time ON prompt_visits(visit_time DESC);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_prompt_visit_user ON prompt_visits(prompt_id, user_id);
