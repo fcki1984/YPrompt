@@ -24,6 +24,13 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('yprompt_token'))
   const user = ref<User | null>(null)
   const isLoading = ref(false)
+  const authConfig = ref<{
+    linux_do_enabled: boolean
+    linux_do_client_id: string
+    linux_do_redirect_uri: string
+    local_auth_enabled: boolean
+    registration_enabled: boolean
+  } | null>(null)
   
   // 计算属性
   const isLoggedIn = computed(() => !!token.value && !!user.value)
@@ -188,6 +195,22 @@ export const useAuthStore = defineStore('auth', () => {
   /**
    * 获取认证配置
    */
+  const fetchAuthConfig = async (): Promise<void> => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || ''}/api/auth/config`)
+      const result = await response.json()
+      
+      if (result.code === 200 && result.data) {
+        authConfig.value = result.data
+      }
+    } catch (error) {
+      console.error('获取认证配置失败:', error)
+    }
+  }
+  
+  /**
+   * 获取认证配置（兼容旧方法名）
+   */
   const getAuthConfig = async (): Promise<{
     linux_do_enabled: boolean
     linux_do_client_id: string
@@ -195,17 +218,10 @@ export const useAuthStore = defineStore('auth', () => {
     local_auth_enabled: boolean
     registration_enabled: boolean
   } | null> => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || ''}/api/auth/config`)
-      const result = await response.json()
-      
-      if (result.code === 200 && result.data) {
-        return result.data
-      }
-      return null
-    } catch (error) {
-      return null
+    if (!authConfig.value) {
+      await fetchAuthConfig()
     }
+    return authConfig.value
   }
   
   /**
@@ -327,6 +343,9 @@ export const useAuthStore = defineStore('auth', () => {
     // 恢复用户信息
     restoreUser()
     
+    // 获取认证配置（用于判断是否启用社区功能）
+    await fetchAuthConfig()
+    
     // 如果有token但没有用户信息，尝试获取
     if (token.value && !user.value) {
       await fetchUserInfo()
@@ -339,6 +358,7 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     isLoading,
     isLoggedIn,
+    authConfig,
     
     // 方法
     setToken,
@@ -347,6 +367,7 @@ export const useAuthStore = defineStore('auth', () => {
     loginWithPassword,
     register,
     getAuthConfig,
+    fetchAuthConfig,
     refreshToken,
     fetchUserInfo,
     logout,

@@ -159,7 +159,7 @@ export default {
           <div class="w-20 h-20 bg-white rounded-full shadow-sm border border-gray-100 flex items-center justify-center mb-4">
             <i data-lucide="sparkles" class="w-8 h-8 text-blue-400"></i>
           </div>
-          <p class="text-base font-semibold text-gray-800 mb-3">欢迎使用提示词操练场</p>
+          <p class="text-base font-semibold text-gray-800 mb-3">欢迎使用提示词演练</p>
           <p class="text-sm text-gray-600 max-w-2xl mb-4">
             左侧对话区会实时返回 AI 输出，这里会渲染各种 Artifact。尝试这些玩法：
           </p>

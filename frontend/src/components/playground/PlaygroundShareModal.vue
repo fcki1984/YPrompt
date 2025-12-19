@@ -3,7 +3,7 @@
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
         <div>
-          <h3 class="text-lg font-semibold text-gray-900">分享操练场快照</h3>
+          <h3 class="text-lg font-semibold text-gray-900">分享演练快照</h3>
           <p class="text-sm text-gray-500">生成唯一链接，与他人共享当前对话与渲染结果</p>
         </div>
         <button class="text-gray-400 hover:text-gray-600" @click="handleClose">
@@ -152,6 +152,7 @@ const props = defineProps<{
   snapshot: SnapshotPayload | null
   systemPrompt: string
   providerInfo: ProviderInfo | null
+  promptId?: number  // 关联的提示词ID（从详情页进入时传入）
 }>()
 
 const emit = defineEmits<{
@@ -238,7 +239,7 @@ const handleSubmit = async () => {
     }))
 
     const payload: PlaygroundSharePayload = {
-      title: form.title || '提示词操练场快照',
+      title: form.title || '提示词演练快照',
       systemPrompt: props.systemPrompt,
       provider: props.providerInfo,
       artifact: props.snapshot.artifact,
@@ -246,7 +247,8 @@ const handleSubmit = async () => {
       is_permanent: form.expireType === 'permanent',
       expires_at: form.expireType === 'permanent' ? undefined : form.expiresAt,
       access_mode: form.accessMode as 'public' | 'auth_only',
-      password: form.password || undefined
+      password: form.password || undefined,
+      prompt_id: props.promptId  // 关联提示词ID
     }
     const response: any = await createPlaygroundShare(payload)
     if (response.code !== 200) {

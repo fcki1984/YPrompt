@@ -77,8 +77,12 @@ class PlaygroundShareService:
         share_code = await self._generate_unique_code()
         expires_value = expires_at.strftime('%Y-%m-%d %H:%M:%S') if expires_at else None
 
+        # 可选：关联提示词ID（从详情页演练时传入）
+        prompt_id = payload.get('prompt_id')
+
         fields = {
             'user_id': user_id,
+            'prompt_id': prompt_id,  # 关联提示词
             'share_code': share_code,
             'title': title,
             'system_prompt': system_prompt,
@@ -149,8 +153,10 @@ class PlaygroundShareService:
         await self.db.execute(update_sql, [now_str, share_id])
 
     async def delete_share(self, user_id: int, share_code: str) -> bool:
-        sql = "UPDATE playground_shares SET is_active = 0 WHERE user_id = ? AND share_code = ?"
+        """物理删除分享记录"""
+        sql = "DELETE FROM playground_shares WHERE user_id = ? AND share_code = ?"
         await self.db.execute(sql, [user_id, share_code])
+        logger.info(f'✅ 删除操练场分享: user_id={user_id}, share_code={share_code}')
         return True
 
     async def update_share(self, user_id: int, share_code: str, payload: Dict[str, Any]) -> bool:

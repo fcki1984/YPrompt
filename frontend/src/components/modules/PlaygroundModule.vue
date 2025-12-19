@@ -13,6 +13,7 @@
       :system-prompt="systemPrompt"
       :snapshot="shareSnapshot"
       :provider-info="currentProviderSnapshot"
+      :prompt-id="prefillPayload?.promptId"
       @close="closeShareModal"
       @shared="handleShareCompleted"
     />
@@ -20,7 +21,7 @@
     <div class="bg-white rounded-lg shadow-sm p-4 mb-4 flex-shrink-0">
       <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div class="min-w-0">
-          <h1 class="text-xl lg:text-2xl font-bold text-gray-900">提示词操练场</h1>
+          <h1 class="text-xl lg:text-2xl font-bold text-gray-900">提示词演练</h1>
           <p class="text-sm text-gray-500">实时调试提示词、网页、图表与可视化 Artifact</p>
         </div>
         <div class="flex items-center gap-2 flex-shrink-0 flex-wrap sm:flex-nowrap">
@@ -275,15 +276,38 @@ const loadPromptForPlayground = async (promptId: number) => {
   if (!promptId) return
   try {
     const token = localStorage.getItem('yprompt_token')
-    if (!token) {
-      throw new Error('请先登录')
-    }
-    const response = await fetch(`${API_BASE_URL}/api/prompts/${promptId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+    const fromCommunity = route.query.from === 'community'
+    
+    // 优先尝试公开API（社区提示词），如果失败再尝试私有API（用户自己的提示词）
+    let response: Response
+    let result: any
+    
+    if (fromCommunity) {
+      // 从社区来的，直接使用公开API
+      const headers: Record<string, string> = {}
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
       }
-    })
-    const result = await response.json()
+      response = await fetch(`${API_BASE_URL}/api/community/prompts/${promptId}`, { headers })
+      result = await response.json()
+    } else {
+      // 先尝试公开API（支持可选认证）
+      const headers: Record<string, string> = {}
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+      response = await fetch(`${API_BASE_URL}/api/community/prompts/${promptId}`, { headers })
+      result = await response.json()
+      
+      // 如果公开API返回404，且用户已登录，尝试私有API
+      if (result.code === 404 && token) {
+        response = await fetch(`${API_BASE_URL}/api/prompts/${promptId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
+        result = await response.json()
+      }
+    }
+    
     if (result.code !== 200) {
       throw new Error(result.message || '加载失败')
     }
@@ -304,7 +328,7 @@ const loadPromptForPlayground = async (promptId: number) => {
       artifact: null
     }
   } catch (error: any) {
-    console.error('加载提示词到操练场失败:', error)
+    console.error('加载提示词到演练失败:', error)
     alert(`加载失败: ${error.message || '未知错误'}`)
   }
 }

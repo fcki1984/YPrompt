@@ -74,6 +74,9 @@ CREATE TABLE `prompts` (
   -- 统计信息
   `view_count` INT(11) DEFAULT 0,
   `use_count` INT(11) DEFAULT 0,
+  `like_count` INT(11) DEFAULT 0 COMMENT '点赞数',
+  `comment_count` INT(11) DEFAULT 0 COMMENT '评论数',
+  `hot_score` DECIMAL(10,2) DEFAULT 0 COMMENT '热度分数',
   
   -- 标签 (逗号分隔)
   `tags` VARCHAR(500) DEFAULT NULL,
@@ -91,6 +94,10 @@ CREATE TABLE `prompts` (
   KEY `idx_prompts_is_favorite` (`is_favorite`),
   KEY `idx_prompts_is_public` (`is_public`),
   KEY `idx_prompts_create_time` (`create_time`),
+  KEY `idx_prompts_hot_score` (`hot_score` DESC),
+  KEY `idx_prompts_like_count` (`like_count` DESC),
+  KEY `idx_prompts_public_create_time` (`is_public`, `create_time` DESC),
+  KEY `idx_prompts_public_hot_score` (`is_public`, `hot_score` DESC),
   CONSTRAINT `fk_prompts_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='提示词表';
 
@@ -227,12 +234,15 @@ CREATE TABLE `playground_shares` (
   `view_count` INT(11) DEFAULT 0,
   `last_access_time` DATETIME DEFAULT NULL,
   `is_active` TINYINT(1) DEFAULT 1,
+  `prompt_id` INT(11) DEFAULT NULL COMMENT '关联的提示词ID',
   `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_playground_share_code` (`share_code`),
   KEY `idx_playground_share_user` (`user_id`),
-  CONSTRAINT `fk_playground_share_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+  KEY `idx_playground_share_prompt` (`prompt_id`),
+  CONSTRAINT `fk_playground_share_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_playground_share_prompt` FOREIGN KEY (`prompt_id`) REFERENCES `prompts` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='操练场分享表';
 
 -- ----------------------------
@@ -325,5 +335,73 @@ CREATE TABLE `user_ai_configs` (
   UNIQUE KEY `uk_user_ai_config` (`user_id`),
   CONSTRAINT `fk_ai_config_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户AI配置表';
+
+-- ----------------------------
+-- 社区功能 - 提示词点赞表
+-- ----------------------------
+DROP TABLE IF EXISTS `prompt_likes`;
+CREATE TABLE `prompt_likes` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `prompt_id` INT(11) NOT NULL,
+  `user_id` INT(11) NOT NULL,
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_prompt_like` (`prompt_id`, `user_id`),
+  KEY `idx_likes_prompt_id` (`prompt_id`),
+  KEY `idx_likes_user_id` (`user_id`),
+  KEY `idx_likes_create_time` (`create_time`),
+  CONSTRAINT `fk_likes_prompt_id` FOREIGN KEY (`prompt_id`) REFERENCES `prompts` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_likes_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='提示词点赞表';
+
+-- ----------------------------
+-- 社区功能 - 提示词评论表
+-- ----------------------------
+DROP TABLE IF EXISTS `prompt_comments`;
+CREATE TABLE `prompt_comments` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `prompt_id` INT(11) NOT NULL,
+  `user_id` INT(11) NOT NULL,
+  `parent_id` INT(11) DEFAULT NULL COMMENT '父评论ID（用于楼中楼回复）',
+  
+  `content` TEXT NOT NULL COMMENT '评论内容',
+  
+  -- 评论状态
+  `is_edited` TINYINT(1) DEFAULT 0 COMMENT '是否已编辑',
+  `is_deleted` TINYINT(1) DEFAULT 0 COMMENT '是否已删除（软删除）',
+  
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  
+  PRIMARY KEY (`id`),
+  KEY `idx_comments_prompt_id` (`prompt_id`),
+  KEY `idx_comments_user_id` (`user_id`),
+  KEY `idx_comments_parent_id` (`parent_id`),
+  KEY `idx_comments_create_time` (`create_time`),
+  KEY `idx_comments_is_deleted` (`is_deleted`),
+  CONSTRAINT `fk_comments_prompt_id` FOREIGN KEY (`prompt_id`) REFERENCES `prompts` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_comments_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_comments_parent_id` FOREIGN KEY (`parent_id`) REFERENCES `prompt_comments` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='提示词评论表';
+
+-- ----------------------------
+-- 社区功能 - 提示词访问足迹表
+-- ----------------------------
+DROP TABLE IF EXISTS `prompt_visits`;
+CREATE TABLE `prompt_visits` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `prompt_id` INT(11) NOT NULL,
+  `user_id` INT(11) NOT NULL,
+  `visit_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_prompt_visit_user` (`prompt_id`, `user_id`),
+  KEY `idx_visits_prompt_id` (`prompt_id`),
+  KEY `idx_visits_user_id` (`user_id`),
+  KEY `idx_visits_time` (`visit_time` DESC),
+  CONSTRAINT `fk_visits_prompt_id` FOREIGN KEY (`prompt_id`) REFERENCES `prompts` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_visits_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='提示词访问足迹表';
 
 SET FOREIGN_KEY_CHECKS = 1;

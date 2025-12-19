@@ -203,7 +203,7 @@ export async function toggleFavorite(id: number, is_favorite: boolean) {
   return post(`/api/prompts/${id}/favorite`, { is_favorite })
 }
 
-// ============ 操练场分享相关API ============
+// ============ 演练分享相关API ============
 
 export interface PlaygroundShareMessage {
   id: string
@@ -223,6 +223,7 @@ export interface PlaygroundSharePayload {
   expires_at?: string
   access_mode: 'public' | 'auth_only'
   password?: string
+  prompt_id?: number  // 关联的提示词ID（可选）
 }
 
 export interface PlaygroundShareListItem {

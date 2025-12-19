@@ -119,7 +119,7 @@ const toDateTimeLocal = (value?: string | null) => {
 
 const syncForm = () => {
   if (!props.share) return
-  form.title = props.share.title || '提示词操练场快照'
+  form.title = props.share.title || '提示词演练快照'
   form.accessMode = props.share.access_mode
   form.expireType = props.share.is_permanent ? 'permanent' : 'custom'
   form.expiresAt = props.share.expires_at ? toDateTimeLocal(props.share.expires_at) : ''
