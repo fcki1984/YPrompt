@@ -4,11 +4,14 @@
 """
 import json
 import datetime
+import hashlib
+import re
 from sanic.log import logger
 
 
 class VersionService:
     """版本管理服务类"""
+    CONTENT_FIELDS = ('final_prompt', 'system_prompt', 'initial_prompt', 'conversation_history')
     
     def __init__(self, db):
         """
@@ -18,6 +21,39 @@ class VersionService:
             db: 数据库连接对象(ezmysql ConnectionAsync)
         """
         self.db = db
+    
+    @classmethod
+    def _build_content_snapshot(cls, source):
+        """提取提示词核心内容字段"""
+        snapshot = {}
+        source = source or {}
+        for field in cls.CONTENT_FIELDS:
+            value = source.get(field, '')
+            if value is None:
+                value = ''
+            snapshot[field] = str(value).strip()
+        return snapshot
+    
+    @classmethod
+    def _normalize_content(cls, snapshot: dict) -> str:
+        """标准化内容用于哈希"""
+        parts = []
+        for field in cls.CONTENT_FIELDS:
+            value = snapshot.get(field, '')
+            if value:
+                normalized = value.replace('\r\n', '\n').strip()
+                normalized = re.sub(r'\s+', ' ', normalized)
+                if normalized:
+                    parts.append(f"{field}:{normalized}")
+        return '||'.join(parts).strip()
+    
+    @classmethod
+    def _calculate_content_hash(cls, snapshot: dict) -> str:
+        """计算内容哈希"""
+        normalized = cls._normalize_content(snapshot)
+        if not normalized:
+            return ''
+        return hashlib.sha256(normalized.encode('utf-8')).hexdigest()
     
     # ============ 辅助方法 ============
     
@@ -106,12 +142,16 @@ class VersionService:
             else:
                 new_version = self.generate_next_version(current_version, change_type)
             
+            content_snapshot = self._build_content_snapshot(current_prompt)
+            content_hash = current_prompt.get('content_hash') or self._calculate_content_hash(content_snapshot)
+            
             # 3. 准备版本数据（完整快照）
             version_data = {
                 'prompt_id': prompt_id,
                 'version_number': new_version,
                 'version_type': 'manual',
                 'version_tag': data.get('version_tag', None),
+                'content_hash': content_hash,
                 
                 # 内容快照
                 'title': current_prompt['title'],
@@ -435,6 +475,9 @@ class VersionService:
             if isinstance(advice_value, list):
                 advice_value = json.dumps(advice_value, ensure_ascii=False)
             
+            target_snapshot = self._build_content_snapshot(target_version)
+            target_hash = target_version.get('content_hash') or self._calculate_content_hash(target_snapshot)
+            
             update_sql = f"""
                 UPDATE prompts SET
                     title = '{escape_sql_string(target_version["title"])}',
@@ -448,7 +491,8 @@ class VersionService:
                     format = '{escape_sql_string(target_version.get("format", "markdown"))}',
                     tags = '{escape_sql_string(tags_value)}',
                     system_prompt = '{escape_sql_string(target_version.get("system_prompt", ""))}',
-                    conversation_history = '{escape_sql_string(target_version.get("conversation_history", ""))}'
+                    conversation_history = '{escape_sql_string(target_version.get("conversation_history", ""))}',
+                    content_hash = '{escape_sql_string(target_hash)}'
                 WHERE id = {prompt_id}
             """
             await self.db.execute(update_sql)

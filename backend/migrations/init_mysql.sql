@@ -66,6 +66,7 @@ CREATE TABLE `prompts` (
   -- 用户提示词专用字段（当prompt_type='user'时使用）
   `system_prompt` TEXT DEFAULT NULL COMMENT '系统提示词（用户提示词上下文）',
   `conversation_history` TEXT DEFAULT NULL COMMENT '对话历史（用户提示词上下文）',
+  `content_hash` VARCHAR(64) DEFAULT NULL COMMENT '核心提示词内容哈希',
   
   -- 状态标记
   `is_favorite` TINYINT(1) DEFAULT 0,
@@ -130,6 +131,7 @@ CREATE TABLE `prompt_versions` (
   -- 用户提示词上下文（保存完整上下文）
   `system_prompt` TEXT DEFAULT NULL COMMENT '系统提示词（用户提示词上下文）',
   `conversation_history` TEXT DEFAULT NULL COMMENT '对话历史（用户提示词上下文）',
+  `content_hash` VARCHAR(64) DEFAULT NULL COMMENT '核心提示词内容哈希',
   
   -- 版本元数据
   `change_log` TEXT DEFAULT NULL,

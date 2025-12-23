@@ -188,23 +188,30 @@ async def update_prompt(request, prompt_id):
     """更新提示词"""
     try:
         user_id = request.ctx.user_id
-        data = request.json
+        data = request.json or {}
+        data['id'] = prompt_id
         
-        # 更新提示词
+        # 复用保存逻辑，确保版本/哈希策略一致
         prompt_service = PromptService(request.app.ctx.db)
-        success = await prompt_service.update_prompt(user_id, prompt_id, data)
-        
-        if not success:
-            return json({
-                'code': 403,
-                'message': '无权限修改或提示词不存在'
-            })
-        
+        result = await prompt_service.save_prompt(user_id, data)
+
         return json({
             'code': 200,
-            'message': '更新成功'
+            'message': result.get('message', '更新成功'),
+            'data': result
         })
-        
+    except ValueError as e:
+        logger.warning(f'⚠️  参数错误: {e}')
+        return json({
+            'code': 400,
+            'message': str(e)
+        })
+    except PermissionError as e:
+        logger.warning(f'⚠️  权限错误: {e}')
+        return json({
+            'code': 403,
+            'message': str(e)
+        })
     except Exception as e:
         logger.error(f'❌ 更新提示词失败: {e}')
         return json({
@@ -317,4 +324,3 @@ async def record_use(request, prompt_id):
             'code': 500,
             'message': f'记录失败: {str(e)}'
         })
-

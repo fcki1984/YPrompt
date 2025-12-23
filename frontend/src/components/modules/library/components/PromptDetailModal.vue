@@ -385,6 +385,7 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import { copyToClipboard as copyUtil } from '@/utils/clipboardUtils'
 import VersionHistoryContent from './VersionHistoryContent.vue'
+import { useNotificationStore } from '@/stores/notificationStore'
 
 // API配置
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
@@ -434,6 +435,8 @@ const showTagInput = ref(false)
 const tagInputRef = ref<HTMLInputElement>()
 const isSaving = ref(false)
 const shouldStartEditing = ref(false)
+
+const notificationStore = useNotificationStore()
 
 const tabs = [
   { key: 'content', label: '提示词内容' },
@@ -520,6 +523,23 @@ watch(showTagInput, async (show) => {
   }
 })
 
+const fetchPromptDetail = async (promptId: number): Promise<Prompt | null> => {
+  const token = localStorage.getItem('yprompt_token')
+  if (!token) {
+    throw new Error('请先登录')
+  }
+  const response = await fetch(`${API_BASE_URL}/api/prompts/${promptId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  const result = await response.json()
+  if (result.code === 200) {
+    return result.data as Prompt
+  }
+  return null
+}
+
 // 保存编辑
 const handleSaveEdit = async () => {
   if (!props.prompt) return
@@ -548,11 +568,22 @@ const handleSaveEdit = async () => {
     })
 
     const result = await response.json()
-    if (result.code === 200) {
-      alert('保存成功')
-      isEditing.value = false
-      // 更新本地数据
-      if (props.prompt) {
+    if (result.code !== 200) {
+      throw new Error(result.message || '保存失败')
+    }
+
+    // 保存成功后刷新最新详情，确保版本号等信息同步
+    let latestPrompt: Prompt | null = null
+    try {
+      latestPrompt = await fetchPromptDetail(props.prompt.id)
+    } catch (detailErr) {
+      console.warn('刷新提示词详情失败，将使用本地数据更新', detailErr)
+    }
+
+    if (props.prompt) {
+      if (latestPrompt) {
+        Object.assign(props.prompt, latestPrompt)
+      } else {
         props.prompt.title = editedTitle.value.trim()
         props.prompt.description = editedDescription.value.trim()
         props.prompt.final_prompt = editedContent.value
@@ -560,14 +591,16 @@ const handleSaveEdit = async () => {
         props.prompt.is_public = editedIsPublic.value ? 1 : 0
         props.prompt.tags = editedTags.value
       }
-      // 通知父组件刷新列表
-      emit('edit', props.prompt)
-    } else {
-      throw new Error(result.message || '保存失败')
+    }
+
+    notificationStore.success(result.message || '保存成功')
+    isEditing.value = false
+    if (props.prompt) {
+      emit('edit', { ...props.prompt })
     }
   } catch (err: any) {
     console.error('保存失败:', err)
-    alert(`保存失败: ${err.message}`)
+    notificationStore.error(`保存失败: ${err.message || '未知错误'}`)
   } finally {
     isSaving.value = false
   }
@@ -579,11 +612,10 @@ const handleCopy = async () => {
   
   try {
     await copyUtil(props.prompt.final_prompt)
-    // 这里可以显示一个toast提示
-    alert('提示词已复制到剪贴板')
+    notificationStore.success('提示词已复制到剪贴板')
   } catch (err) {
     console.error('复制失败:', err)
-    alert('复制失败')
+    notificationStore.error('复制失败')
   }
 }
 

@@ -4,11 +4,14 @@
 """
 import json
 import datetime
+import hashlib
+import re
 from sanic.log import logger
 
 
 class PromptService:
     """提示词服务类"""
+    CONTENT_FIELDS = ('final_prompt', 'system_prompt', 'initial_prompt', 'conversation_history')
     
     def __init__(self, db):
         """
@@ -18,6 +21,39 @@ class PromptService:
             db: 数据库连接对象(ezmysql ConnectionAsync)
         """
         self.db = db
+    
+    @classmethod
+    def _build_content_snapshot(cls, source):
+        """提取提示词核心内容字段"""
+        snapshot = {}
+        source = source or {}
+        for field in cls.CONTENT_FIELDS:
+            value = source.get(field, '')
+            if value is None:
+                value = ''
+            snapshot[field] = str(value).strip()
+        return snapshot
+    
+    @classmethod
+    def _normalize_content(cls, snapshot: dict) -> str:
+        """将核心提示词字段标准化为可哈希字符串"""
+        parts = []
+        for field in cls.CONTENT_FIELDS:
+            value = snapshot.get(field, '')
+            if value:
+                normalized = value.replace('\r\n', '\n').strip()
+                normalized = re.sub(r'\s+', ' ', normalized)
+                if normalized:
+                    parts.append(f"{field}:{normalized}")
+        return '||'.join(parts).strip()
+    
+    @classmethod
+    def _calculate_content_hash(cls, snapshot: dict) -> str:
+        """计算提示词核心内容的哈希"""
+        normalized = cls._normalize_content(snapshot)
+        if not normalized:
+            return ''
+        return hashlib.sha256(normalized.encode('utf-8')).hexdigest()
     
     async def save_prompt(self, user_id, data):
         """
@@ -51,19 +87,40 @@ class PromptService:
             # 判断是新建还是更新
             if prompt_id:
                 # 验证提示词存在且有权限
-                check_sql = f"SELECT id, current_version FROM prompts WHERE id = {prompt_id} AND user_id = {user_id}"
+                check_sql = (
+                    "SELECT id, current_version, final_prompt, system_prompt, "
+                    "initial_prompt, conversation_history, content_hash "
+                    f"FROM prompts WHERE id = {prompt_id} AND user_id = {user_id}"
+                )
                 existing = await self.db.get(check_sql)
                 
                 if not existing:
                     raise PermissionError('提示词不存在或无权限修改')
                 
+                # 计算提示词内容哈希,用于判断是否创建新版本
+                existing_snapshot = self._build_content_snapshot(existing)
+                stored_hash = existing.get('content_hash')
+                existing_hash = stored_hash or self._calculate_content_hash(existing_snapshot)
+                
+                new_snapshot = existing_snapshot.copy()
+                for field in self.CONTENT_FIELDS:
+                    if field in data:
+                        new_snapshot[field] = str(data.get(field) or '').strip()
+                new_hash = self._calculate_content_hash(new_snapshot)
+                content_changed = existing_hash != new_hash
+                
+                update_data = dict(data)
+                should_update_hash = bool(new_hash) and stored_hash != new_hash
+                if should_update_hash:
+                    update_data['content_hash'] = new_hash
+                
                 # 更新提示词
                 logger.info(f'🔄 更新提示词: prompt_id={prompt_id}')
-                await self.update_prompt(user_id, prompt_id, data)
+                await self.update_prompt(user_id, prompt_id, update_data)
                 
                 # 如果需要创建版本
                 version_number = None
-                if create_version:
+                if create_version and content_changed:
                     from apps.modules.versions.services import VersionService
                     version_service = VersionService(self.db)
                     
@@ -81,8 +138,9 @@ class PromptService:
                     
                     version_result = await version_service.create_version(prompt_id, user_id, version_data)
                     version_number = version_result['version_number']
-                    
                     logger.info(f'✅ 版本创建成功: version={version_number}')
+                elif create_version:
+                    logger.info(f'ℹ️ 提示词内容未变化,跳过版本创建: prompt_id={prompt_id}')
                 
                 return {
                     'id': prompt_id,
@@ -168,6 +226,8 @@ class PromptService:
                 'system_prompt': data.get('system_prompt', '') if data.get('prompt_type') == 'user' else None,
                 'conversation_history': data.get('conversation_history', '') if data.get('prompt_type') == 'user' else None
             }
+            content_snapshot = self._build_content_snapshot(fields)
+            fields['content_hash'] = self._calculate_content_hash(content_snapshot)
             
             # 插入数据库
             prompt_id = await self.db.table_insert('prompts', fields)
@@ -405,6 +465,9 @@ class PromptService:
             
             if 'conversation_history' in data:
                 update_fields.append("conversation_history = '" + escape_sql_string(data.get('conversation_history', '')) + "'")
+            
+            if 'content_hash' in data:
+                update_fields.append("content_hash = '" + escape_sql_string(data.get('content_hash', '')) + "'")
             
             if 'tags' in data:
                 tags = ','.join(data['tags']) if data['tags'] else ''

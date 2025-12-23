@@ -92,6 +92,7 @@ CREATE TABLE IF NOT EXISTS prompts (
   -- 用户提示词专用字段（当prompt_type='user'时使用）
   system_prompt TEXT DEFAULT NULL,
   conversation_history TEXT DEFAULT NULL,
+  content_hash VARCHAR(64) DEFAULT NULL,
   
   -- 状态标记
   is_favorite INTEGER DEFAULT 0,
@@ -149,6 +150,7 @@ CREATE TABLE IF NOT EXISTS prompt_versions (
   -- 用户提示词上下文（保存完整上下文）
   system_prompt TEXT DEFAULT NULL,
   conversation_history TEXT DEFAULT NULL,
+  content_hash VARCHAR(64) DEFAULT NULL,
   
   -- 版本元数据
   change_log TEXT DEFAULT NULL,
