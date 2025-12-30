@@ -58,8 +58,8 @@ class Config:
     # 日志配置
     # ==========================================
     # 日志文件路径（可选，不配置则使用默认路径）
-    LOGGING_INFO_FILE = '../data/logs/backend/info.log'
-    LOGGING_ERROR_FILE = '../data/logs/backend/error.log'
+    # LOGGING_INFO_FILE = '../data/logs/backend/info.log'
+    # LOGGING_ERROR_FILE = '../data/logs/backend/error.log'
 
     # ==========================================
     # 服务器配置

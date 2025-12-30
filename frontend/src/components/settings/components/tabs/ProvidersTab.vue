@@ -24,7 +24,7 @@
           <div class="text-sm text-blue-700 space-y-2">
             <div><strong>OpenAI及兼容服务：</strong>API URL填写完整路径，如 <code class="bg-blue-100 px-1 rounded break-all text-xs">https://api.openai.com/v1/chat/completions</code></div>
             <div><strong>Anthropic Claude：</strong>API URL填写 <code class="bg-blue-100 px-1 rounded break-all text-xs">https://api.anthropic.com/v1/messages</code></div>
-            <div><strong>Google Gemini：</strong>API URL填写 <code class="bg-blue-100 px-1 rounded break-all text-xs">https://generativelanguage.googleapis.com/v1beta</code>（系统会自动根据模型拼接路径）</div>
+            <div><strong>Gemini：</strong>API URL填写 <code class="bg-blue-100 px-1 rounded break-all text-xs">https://generativelanguage.googleapis.com/v1beta</code>（系统会自动根据模型拼接路径）</div>
             <div><strong>自定义提供商：</strong>大多数第三方服务使用OpenAI兼容格式，URL结构为 <code class="bg-blue-100 px-1 rounded break-all text-xs">https://你的域名/v1/chat/completions</code></div>
             <div class="text-xs text-blue-600 mt-2">支持代理地址、中转API等各种自定义URL</div>
           </div>
@@ -40,13 +40,13 @@
                 <div class="text-xs text-blue-600 ml-4">• 图片格式：PNG, JPEG, WEBP, GIF</div>
                 <div class="text-xs text-blue-600 ml-4">• PDF文档：Claude 3.5+（最多100页）</div>
               </div>
-              <div><strong>Google Gemini：</strong>全面支持图片、文档（PDF/Office）、音频、视频等多模态
+              <div><strong>Gemini：</strong>全面支持图片、文档（PDF/Office）、音频、视频等多模态
                 <div class="text-xs text-blue-600 ml-4">• 图片：PNG, JPEG, WEBP, GIF, BMP, TIFF, SVG, HEIC</div>
                 <div class="text-xs text-blue-600 ml-4">• 文档：PDF, Office(Word/Excel/PPT), TXT, Markdown, CSV等</div>
                 <div class="text-xs text-blue-600 ml-4">• 音频：WAV, MP3, AAC, OGG, FLAC</div>
                 <div class="text-xs text-blue-600 ml-4">• 视频：MP4, MOV, AVI, WebM等</div>
               </div>
-              <div class="text-xs text-blue-600 mt-2">💡 如需上传表格等文档，建议使用 Google Gemini 模型</div>
+              <div class="text-xs text-blue-600 mt-2">💡 如需上传表格等文档，建议使用 Gemini 模型</div>
             </div>
           </div>
         </div>
@@ -120,14 +120,26 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">API密钥</label>
-              <input
-                v-model="provider.apiKey"
-                type="password"
-                placeholder="输入API密钥"
-                autocomplete="off"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                @input="$emit('save')"
-              />
+              <form @submit.prevent>
+                <!-- 隐藏的用户名字段，用于消除浏览器密码表单警告 -->
+                <input
+                  type="text"
+                  name="username"
+                  autocomplete="username"
+                  style="display: none;"
+                  aria-hidden="true"
+                  tabindex="-1"
+                />
+                <input
+                  v-model="provider.apiKey"
+                  type="password"
+                  name="api-key"
+                  placeholder="输入API密钥"
+                  autocomplete="new-password"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  @input="$emit('save')"
+                />
+              </form>
             </div>
             <div v-if="provider.allowCustomUrl || provider.type === 'custom'">
               <label class="block text-sm font-medium text-gray-700 mb-1">

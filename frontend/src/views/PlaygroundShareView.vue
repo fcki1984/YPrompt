@@ -72,12 +72,25 @@
 
     <div v-else-if="needPassword" class="bg-white rounded-lg shadow p-6 flex flex-col gap-3 max-w-md">
       <p class="text-gray-700">该分享已设置访问密码，请输入密码继续。</p>
-      <input
-        v-model="passwordInput"
-        type="password"
-        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-        placeholder="请输入密码"
-      />
+      <form @submit.prevent="fetchShare">
+        <!-- 隐藏的用户名字段，用于消除浏览器密码表单警告 -->
+        <input
+          type="text"
+          name="username"
+          autocomplete="username"
+          style="display: none;"
+          aria-hidden="true"
+          tabindex="-1"
+        />
+        <input
+          v-model="passwordInput"
+          type="password"
+          name="share-password"
+          autocomplete="current-password"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          placeholder="请输入密码"
+        />
+      </form>
       <div class="flex items-center gap-2">
         <button class="px-4 py-2 bg-blue-600 text-white rounded-lg" @click="fetchShare">确定</button>
         <button class="px-4 py-2 text-gray-600" @click="passwordInput = ''">重置</button>

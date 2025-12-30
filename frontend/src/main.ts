@@ -21,7 +21,12 @@ const router = createRouter({
     },
     {
       path: '/',
-      redirect: '/generate'
+      redirect: '/drawing'
+    },
+    {
+      path: '/drawing',
+      name: 'drawing',
+      component: () => import('./components/modules/DrawingModule.vue')
     },
     {
       path: '/generate',

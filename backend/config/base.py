@@ -50,8 +50,8 @@ class BaseConfig(object):
     WORKERS = 1
 
     # 跨域相关
-    # 是否启动跨域功能
-    ENABLE_CORS = False
+    # 是否启动跨域功能（前后端分离部署时必须开启）
+    ENABLE_CORS = True
     CORS_SUPPORTS_CREDENTIALS = True
 
     # redis配置

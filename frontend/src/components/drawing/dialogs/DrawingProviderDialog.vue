@@ -1,27 +1,31 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4">
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-lg max-w-md w-full p-6">
       <h3 class="text-lg font-semibold mb-4">
-        {{ editing ? '编辑提供商' : `添加${providerType === 'custom' ? '自定义' : ''}提供商` }}
+        {{ editing ? '编辑提供商' : '添加提供商' }}
       </h3>
 
       <form @submit.prevent="$emit('save')">
         <div class="space-y-4">
+          <!-- 提供商名称 -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">提供商名称</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              提供商名称
+            </label>
             <input
               :value="name"
               @input="$emit('update:name', ($event.target as HTMLInputElement).value)"
               type="text"
-              :placeholder="providerType === 'custom' ? '例如：DeepSeek' : '可自定义名称'"
+              placeholder="例如: Gemini"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
-          <div v-if="providerType === 'custom' || (providerType && ['openai', 'anthropic', 'google'].includes(providerType) && getProviderTemplate(providerType).allowCustomUrl)">
+          <!-- API URL -->
+          <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">
               API URL
-              <span v-if="providerType !== 'custom'" class="text-xs text-gray-500">(可选，留空使用官方完整地址)</span>
+              <span class="text-xs text-gray-500">(可选，留空使用默认)</span>
             </label>
             <input
               :value="baseUrl"
@@ -30,10 +34,16 @@
               :placeholder="getDefaultBaseUrl(providerType)"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
+            <p class="mt-1 text-xs text-gray-500">
+              默认: {{ getDefaultBaseUrl(providerType) }}
+            </p>
           </div>
 
+          <!-- API Key -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">API密钥</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              API 密钥
+            </label>
             <!-- 隐藏的用户名字段，用于消除浏览器密码表单警告 -->
             <input
               type="text"
@@ -48,7 +58,7 @@
               @input="$emit('update:apiKey', ($event.target as HTMLInputElement).value)"
               type="password"
               name="api-key"
-              placeholder="输入API密钥"
+              placeholder="输入你的 API 密钥"
               autocomplete="new-password"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
@@ -56,7 +66,7 @@
         </div>
       </form>
 
-      <div class="flex justify-end space-x-3 mt-6">
+      <div class="mt-6 flex justify-end space-x-3">
         <button
           @click="$emit('close')"
           class="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
@@ -65,8 +75,7 @@
         </button>
         <button
           @click="$emit('save')"
-          :disabled="!name || (providerType === 'custom' && !baseUrl)"
-          class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50"
+          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
         >
           {{ editing ? '保存' : '添加' }}
         </button>
@@ -78,19 +87,18 @@
 <script setup lang="ts">
 defineProps<{
   editing: boolean
-  providerType: 'openai' | 'anthropic' | 'google' | 'custom'
+  providerType: 'google' | 'custom'
   name: string
   baseUrl: string
   apiKey: string
   getDefaultBaseUrl: (type: string) => string
-  getProviderTemplate: (type: 'openai' | 'anthropic' | 'google' | 'custom') => any
 }>()
 
 defineEmits<{
   'update:name': [value: string]
   'update:baseUrl': [value: string]
   'update:apiKey': [value: string]
-  save: []
-  close: []
+  'save': []
+  'close': []
 }>()
 </script>

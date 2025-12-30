@@ -39,3 +39,7 @@ class Config(BaseConfig):
         REGISTRATION_ENABLED = _registration_env.lower() in ('1', 'true', 'yes', 'on')
     else:
         REGISTRATION_ENABLED = cf.REGISTRATION_ENABLED if hasattr(cf, 'REGISTRATION_ENABLED') else False
+
+    # 日志配置（优先使用环境变量）
+    LOGGING_INFO_FILE = os.getenv('LOGGING_INFO_FILE') or (cf.LOGGING_INFO_FILE if hasattr(cf, 'LOGGING_INFO_FILE') else '../data/logs/backend/info.log')
+    LOGGING_ERROR_FILE = os.getenv('LOGGING_ERROR_FILE') or (cf.LOGGING_ERROR_FILE if hasattr(cf, 'LOGGING_ERROR_FILE') else '../data/logs/backend/error.log')

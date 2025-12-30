@@ -1,0 +1,455 @@
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+
+/**
+ * 批量生成的图片候选
+ */
+export interface ImageCandidate {
+  id: string
+  imageData?: string  // base64
+  mimeType?: string
+  thoughtSignature?: string  // 思考签名（用于后续对话）
+  text?: string  // AI返回的文本描述
+  prompt?: string  // 用户输入的提示词
+  isGenerating?: boolean  // 是否正在生成
+  error?: string  // 生成错误信息
+}
+
+/**
+ * 对话消息类型
+ */
+export interface DrawingMessage {
+  id: string
+  role: 'user' | 'model' | 'system'
+  parts: MessagePart[]
+  timestamp: number
+  // 批量生成相关
+  imageCandidates?: ImageCandidate[]  // 批量生成的图片候选列表
+  selectedCandidateIndex?: number  // 用户选择的候选索引（-1表示未选择）
+  isAwaitingSelection?: boolean  // 是否等待用户选择
+}
+
+/**
+ * 消息片段类型
+ */
+export interface MessagePart {
+  text?: string
+  thoughtSignature?: string  // 用于多轮图像编辑的思考签名
+  inlineData?: {
+    mimeType: string
+    data: string  // base64
+  }
+}
+
+/**
+ * 生成的图片结果
+ */
+export interface GeneratedImage {
+  id: string
+  imageData: string  // base64
+  mimeType: string
+  prompt: string
+  timestamp: number
+  generationConfig: any
+}
+
+/**
+ * 模型提供商配置
+ */
+export interface DrawingProvider {
+  id: string
+  name: string
+  apiKey: string
+  baseURL?: string
+  models: DrawingModel[]
+}
+
+/**
+ * 模型配置
+ */
+export interface DrawingModel {
+  id: string
+  name: string
+  supportsImage: boolean
+}
+
+/**
+ * 函数声明（用于tools）
+ */
+export interface FunctionDeclaration {
+  name: string
+  description: string
+  parametersJson: string  // JSON字符串（用于UI编辑）
+  parameters?: any  // 解析后的JSON Schema对象
+  parameterError?: string  // JSON解析错误信息
+}
+
+/**
+ * Gemini 图像生成完整配置（严格按照API文档 - Nano Banana Pro）
+ */
+export interface ImageGenerationConfig {
+  // === imageConfig ===
+  aspectRatio: '1:1' | '2:3' | '3:2' | '3:4' | '4:3' | '4:5' | '5:4' | '9:16' | '16:9' | '21:9'
+  imageSize: '1K' | '2K' | '4K'
+
+  // === 基础生成参数 ===
+  temperature: number  // [0.0, 2.0]
+  topP: number  // [0.0, 1.0]
+  topK: number  // [1, 40]
+  maxOutputTokens: number  // [1, 8192]
+  // candidateCount 已移除 - 大多数Gemini模型不支持此参数
+
+  // === 停止序列 ===
+  stopSequences: string[]  // 最多5个
+
+  // === 惩罚参数 ===
+  presencePenalty: number  // [-2.0, 2.0]
+  frequencyPenalty: number  // [-2.0, 2.0]
+
+  // === 高级参数 ===
+  seed?: number  // 随机种子
+  responseLogprobs: boolean  // 是否包含日志概率
+  logprobs?: number  // [0, 20] 需启用responseLogprobs
+  enableEnhancedCivicAnswers: boolean  // 增强公民诚信回答
+
+  // === 响应格式 ===
+  responseModalities: Array<'TEXT' | 'IMAGE'>  // 输出模态
+  responseMimeType: 'text/plain' | 'application/json' | 'image/png' | 'image/jpeg'
+  responseSchema?: any  // JSON Schema对象
+
+  // === 工具配置 ===
+  useGoogleSearch: boolean  // 是否启用Google搜索接地
+  useCodeExecution: boolean  // 是否启用代码执行
+  functionDeclarations: FunctionDeclaration[]  // 自定义函数声明数组
+  functionCallingMode?: 'FUNCTION_CALLING_CONFIG_MODE_UNSPECIFIED' | 'AUTO' | 'ANY' | 'NONE'
+
+  // === 媒体分辨率 ===
+  mediaResolution: 'MEDIA_RESOLUTION_UNSPECIFIED' | 'MEDIA_RESOLUTION_LOW' | 'MEDIA_RESOLUTION_MEDIUM' | 'MEDIA_RESOLUTION_HIGH'
+
+  // === 安全设置 ===
+  safetySettings: SafetySetting[]
+}
+
+/**
+ * 安全设置（严格按照API文档 - 完整枚举）
+ */
+export interface SafetySetting {
+  category:
+    | 'HARM_CATEGORY_UNSPECIFIED'
+    | 'HARM_CATEGORY_DEROGATORY'
+    | 'HARM_CATEGORY_TOXICITY'
+    | 'HARM_CATEGORY_VIOLENCE'
+    | 'HARM_CATEGORY_SEXUAL'
+    | 'HARM_CATEGORY_MEDICAL'
+    | 'HARM_CATEGORY_DANGEROUS'
+    | 'HARM_CATEGORY_HARASSMENT'
+    | 'HARM_CATEGORY_HATE_SPEECH'
+    | 'HARM_CATEGORY_SEXUALLY_EXPLICIT'
+    | 'HARM_CATEGORY_DANGEROUS_CONTENT'
+    | 'HARM_CATEGORY_CIVIC_INTEGRITY'
+  threshold:
+    | 'HARM_BLOCK_THRESHOLD_UNSPECIFIED'
+    | 'BLOCK_LOW_AND_ABOVE'
+    | 'BLOCK_MEDIUM_AND_ABOVE'
+    | 'BLOCK_ONLY_HIGH'
+    | 'BLOCK_NONE'
+    | 'OFF'
+}
+
+/**
+ * 绘图设置存储键
+ */
+const DRAWING_SETTINGS_KEY = 'yprompt_drawing_settings'
+const DRAWING_PROVIDERS_KEY = 'yprompt_drawing_providers'
+const DRAWING_CONVERSATION_KEY = 'yprompt_drawing_conversation'
+const DRAWING_IMAGES_KEY = 'yprompt_drawing_images'
+
+export const useDrawingStore = defineStore('drawing', () => {
+  // 状态
+  const conversationHistory = ref<DrawingMessage[]>([])
+  const generatedImages = ref<GeneratedImage[]>([])
+  const isGenerating = ref(false)
+  const currentStreamingText = ref('')
+
+  // 批量生成配置
+  const batchGenerationCount = ref(1)  // 每次生成图片数量（1-4）
+  const batchGenerationProgress = ref<{ current: number; total: number }>({ current: 0, total: 0 })
+
+  // 提供商和模型配置
+  const providers = ref<DrawingProvider[]>([])
+  const selectedProvider = ref<string>('')
+  const selectedModel = ref<string>('')
+
+  // 图像生成配置（默认值严格按照API文档）
+  const generationConfig = ref<ImageGenerationConfig>({
+    // imageConfig
+    aspectRatio: '1:1',
+    imageSize: '1K',
+
+    // 基础生成参数（默认值按API文档）
+    temperature: 0.9,
+    topP: 1.0,
+    topK: 32,
+    maxOutputTokens: 2048,
+    // candidateCount 已移除 - 大多数Gemini模型不支持
+
+    // 停止序列
+    stopSequences: [],
+
+    // 惩罚参数（默认值为无，即0）
+    presencePenalty: 0,
+    frequencyPenalty: 0,
+
+    // 高级参数（默认值按API文档）
+    seed: undefined,
+    responseLogprobs: false,
+    logprobs: undefined,
+    enableEnhancedCivicAnswers: false,
+
+    // 响应格式
+    responseModalities: ['TEXT', 'IMAGE'],
+    responseMimeType: 'text/plain',
+    responseSchema: undefined,
+
+    // 工具配置
+    useGoogleSearch: false,
+    useCodeExecution: false,
+    functionDeclarations: [],
+    functionCallingMode: 'FUNCTION_CALLING_CONFIG_MODE_UNSPECIFIED',
+
+    // 媒体分辨率（默认值按API文档）
+    mediaResolution: 'MEDIA_RESOLUTION_UNSPECIFIED',
+
+    // 安全设置（默认中等阈值）
+    safetySettings: [
+      { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+      { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+      { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+      { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' }
+    ]
+  })
+
+  // 方法：添加消息到对话历史
+  const addMessage = (message: DrawingMessage) => {
+    conversationHistory.value.push(message)
+    // saveConversation()  // 已禁用localStorage存储
+  }
+
+  // 方法：添加生成的图片
+  const addGeneratedImage = (image: GeneratedImage) => {
+    generatedImages.value.unshift(image)  // 最新的在前面
+    // saveImages()  // 已禁用localStorage存储
+  }
+
+  // 方法：清空对话历史
+  const clearConversation = () => {
+    conversationHistory.value = []
+    currentStreamingText.value = ''
+    localStorage.removeItem(DRAWING_CONVERSATION_KEY)  // 同时清空localStorage
+  }
+
+  // 方法：清空生成的图片
+  const clearImages = () => {
+    generatedImages.value = []
+    localStorage.removeItem(DRAWING_IMAGES_KEY)  // 同时清空localStorage
+  }
+
+  // 方法：添加提供商
+  const addProvider = (provider: DrawingProvider) => {
+    providers.value.push(provider)
+    saveProviders()
+  }
+
+  // 方法：更新提供商
+  const updateProvider = (providerId: string, updates: Partial<DrawingProvider>) => {
+    const index = providers.value.findIndex(p => p.id === providerId)
+    if (index !== -1) {
+      providers.value[index] = { ...providers.value[index], ...updates }
+      saveProviders()
+    }
+  }
+
+  // 方法：删除提供商
+  const deleteProvider = (providerId: string) => {
+    providers.value = providers.value.filter(p => p.id !== providerId)
+    if (selectedProvider.value === providerId) {
+      selectedProvider.value = ''
+      selectedModel.value = ''
+    }
+    saveProviders()
+  }
+
+  // 方法：获取可用的提供商(有API Key的)
+  const getAvailableProviders = () => {
+    return providers.value.filter(p => p.apiKey && p.apiKey.trim() !== '')
+  }
+
+  // 方法：获取当前提供商的可用模型
+  const getAvailableModels = (providerId: string) => {
+    const provider = providers.value.find(p => p.id === providerId)
+    return provider ? provider.models : []
+  }
+
+  // 方法：获取当前选中的提供商
+  const getCurrentProvider = () => {
+    return providers.value.find(p => p.id === selectedProvider.value)
+  }
+
+  // 方法：获取当前选中的模型
+  const getCurrentModel = () => {
+    const provider = getCurrentProvider()
+    if (!provider) return null
+    return provider.models.find(m => m.id === selectedModel.value) || null
+  }
+
+  // 方法：添加模型到指定提供商
+  const addModel = (providerId: string, model: DrawingModel) => {
+    const provider = providers.value.find(p => p.id === providerId)
+    if (provider) {
+      provider.models.push(model)
+      saveProviders()
+    }
+  }
+
+  // 方法：删除模型
+  const deleteModel = (providerId: string, modelId: string) => {
+    const provider = providers.value.find(p => p.id === providerId)
+    if (provider) {
+      provider.models = provider.models.filter(m => m.id !== modelId)
+      if (selectedModel.value === modelId) {
+        selectedModel.value = ''
+      }
+      saveProviders()
+    }
+  }
+
+  // 方法：保存设置到 localStorage
+  const saveSettings = () => {
+    const settings = {
+      selectedProvider: selectedProvider.value,
+      selectedModel: selectedModel.value,
+      generationConfig: generationConfig.value
+    }
+    localStorage.setItem(DRAWING_SETTINGS_KEY, JSON.stringify(settings))
+  }
+
+  // 方法：保存提供商到 localStorage
+  const saveProviders = () => {
+    localStorage.setItem(DRAWING_PROVIDERS_KEY, JSON.stringify(providers.value))
+  }
+
+  // 注意：对话历史和图片的localStorage存储功能已禁用
+  // 将来会上传到对象存储服务
+
+  // 方法：从 localStorage 加载设置
+  const loadSettings = () => {
+    try {
+      const saved = localStorage.getItem(DRAWING_SETTINGS_KEY)
+      if (saved) {
+        const settings = JSON.parse(saved)
+        if (settings.selectedProvider) selectedProvider.value = settings.selectedProvider
+        if (settings.selectedModel) selectedModel.value = settings.selectedModel
+        if (settings.generationConfig) {
+          generationConfig.value = {
+            ...generationConfig.value,
+            ...settings.generationConfig
+          }
+
+          // 修复旧数据：确保 functionDeclarations 存在
+          if (!generationConfig.value.functionDeclarations) {
+            generationConfig.value.functionDeclarations = []
+          }
+        }
+      }
+
+      // 加载提供商
+      const savedProviders = localStorage.getItem(DRAWING_PROVIDERS_KEY)
+      if (savedProviders) {
+        providers.value = JSON.parse(savedProviders)
+      } else {
+        // 初始化默认提供商
+        providers.value = [{
+          id: 'gemini-default',
+          name: 'Gemini',
+          apiKey: '',
+          baseURL: 'https://generativelanguage.googleapis.com/v1beta',
+          models: [
+            { id: 'gemini-3-pro-image-preview', name: 'gemini-3-pro-image-preview', supportsImage: true },
+            { id: 'gemini-2.5-flash-lite', name: 'gemini-2.5-flash-lite', supportsImage: false }
+          ]
+        }]
+        saveProviders()
+      }
+
+      // 已禁用localStorage存储 - 将来会上传到对象存储
+      // // 加载对话历史
+      // const savedConversation = localStorage.getItem(DRAWING_CONVERSATION_KEY)
+      // if (savedConversation) {
+      //   conversationHistory.value = JSON.parse(savedConversation)
+      // }
+
+      // // 加载图片数据
+      // const savedImages = localStorage.getItem(DRAWING_IMAGES_KEY)
+      // if (savedImages) {
+      //   generatedImages.value = JSON.parse(savedImages)
+      // }
+    } catch (error) {
+      console.error('加载绘图设置失败:', error)
+    }
+  }
+
+  // 方法：删除指定图片
+  const deleteImage = (imageId: string) => {
+    const index = generatedImages.value.findIndex(img => img.id === imageId)
+    if (index !== -1) {
+      generatedImages.value.splice(index, 1)
+      // saveImages()  // 已禁用localStorage存储
+    }
+  }
+
+  // 方法：删除指定消息
+  const deleteMessage = (messageId: string) => {
+    const index = conversationHistory.value.findIndex(msg => msg.id === messageId)
+    if (index !== -1) {
+      conversationHistory.value.splice(index, 1)
+      // saveConversation()  // 已禁用localStorage存储
+    }
+  }
+
+  // 初始化时加载设置
+  loadSettings()
+
+  return {
+    // 状态
+    conversationHistory,
+    generatedImages,
+    isGenerating,
+    currentStreamingText,
+    batchGenerationCount,
+    batchGenerationProgress,
+    providers,
+    selectedProvider,
+    selectedModel,
+    generationConfig,
+
+    // 方法
+    addMessage,
+    addGeneratedImage,
+    clearConversation,
+    clearImages,
+    addProvider,
+    updateProvider,
+    deleteProvider,
+    getAvailableProviders,
+    getAvailableModels,
+    getCurrentProvider,
+    getCurrentModel,
+    addModel,
+    deleteModel,
+    saveSettings,
+    saveProviders,
+    loadSettings,
+    deleteImage,
+    deleteMessage
+  }
+})

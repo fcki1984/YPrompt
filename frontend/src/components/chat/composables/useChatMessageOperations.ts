@@ -94,6 +94,10 @@ export function useChatMessageOperations(_chatContainer?: any) {
     }
   }
 
+  const updateEditingContent = (messageId: string, value: string) => {
+    editingContent.value[messageId] = value
+  }
+
   return {
     editingContent,
     editTextareaRefs,
@@ -106,6 +110,7 @@ export function useChatMessageOperations(_chatContainer?: any) {
     cancelEdit,
     deleteMessage,
     copyMessage,
-    handleEditKeydown
+    handleEditKeydown,
+    updateEditingContent
   }
 }

@@ -1,7 +1,7 @@
 [
   {
     "type": "custom",
-    "name": "默认",
+    "name": "演示",
     "apiKey": "xueximeng",
     "baseUrl": "https://api-load.252035.xyz/proxy/gemini429",
     "enabled": true,
@@ -9,12 +9,6 @@
       {
         "id": "gemini-2.5-flash-lite",
         "name": "gemini-2.5-flash-lite",
-        "enabled": true,
-        "apiType": "google"
-      },
-      {
-        "id": "gemini-2.0-flash-lite",
-        "name": "gemini-2.0-flash-lite",
         "enabled": true,
         "apiType": "google"
       }

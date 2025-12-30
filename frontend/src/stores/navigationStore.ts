@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useAuthStore } from './authStore'
 
-export type ModuleType = 'generate' | 'optimize' | 'playground' | 'library' | 'community'
+export type ModuleType = 'generate' | 'optimize' | 'playground' | 'library' | 'community' | 'drawing'
 
 export interface ModuleConfig {
   id: ModuleType
@@ -11,11 +11,12 @@ export interface ModuleConfig {
   path: string
   color: string
   requiresCommunity?: boolean  // 是否需要社区功能启用
+  hidden?: boolean  // 是否隐藏该模块
 }
 
 export const useNavigationStore = defineStore('navigation', () => {
   // 状态
-  const currentModule = ref<ModuleType>('generate')
+  const currentModule = ref<ModuleType>('drawing')
   const sidebarCollapsed = ref(false)
   const isMobile = ref(false)
   const communityEnabled = ref(false)  // 社区功能是否启用
@@ -23,9 +24,16 @@ export const useNavigationStore = defineStore('navigation', () => {
   // 所有模块配置
   const allModules: ModuleConfig[] = [
     {
+      id: 'drawing',
+      name: '绘图',
+      icon: '🎨',
+      path: '/drawing',
+      color: '#8B5CF6'
+    },
+    {
       id: 'generate',
       name: '生成',
-      icon: '🏠',
+      icon: '📝',
       path: '/generate',
       color: '#3B82F6'
     },
@@ -48,8 +56,7 @@ export const useNavigationStore = defineStore('navigation', () => {
       name: '广场',
       icon: '👥',
       path: '/community',
-      color: '#EC4899',
-      requiresCommunity: true  // 需要社区功能
+      color: '#EC4899'
     },
     {
       id: 'library',
@@ -63,6 +70,11 @@ export const useNavigationStore = defineStore('navigation', () => {
   // 根据社区功能状态过滤可见模块
   const modules = computed(() => {
     return allModules.filter(m => {
+      // 隐藏标记为 hidden 的模块
+      if (m.hidden) {
+        return false
+      }
+      // 社区功能需要启用才显示
       if (m.requiresCommunity) {
         return communityEnabled.value
       }
@@ -108,12 +120,6 @@ export const useNavigationStore = defineStore('navigation', () => {
       
       // 只要开启了任意OAuth方式或允许注册时启用社区功能
       communityEnabled.value = !!(config?.linux_do_enabled || config?.feishu_enabled || config?.registration_enabled)
-      
-      console.log('社区功能状态:', {
-        linux_do_enabled: config?.linux_do_enabled,
-        registration_enabled: config?.registration_enabled,
-        communityEnabled: communityEnabled.value
-      })
     } catch (error) {
       console.error('检查社区功能失败:', error)
       communityEnabled.value = false

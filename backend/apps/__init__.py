@@ -3,6 +3,7 @@
 """
 初始化app及各种相关配置，扩展插件，中间件，蓝图等
 """
+import os
 import pkgutil
 import importlib
 import logging.config
@@ -51,8 +52,21 @@ def create_app(env=None,name=None):
     # init a sanic app
     name = name if name else __name__
     app = Sanic(name)
-    # 配置日志
+
+    # 配置日志（更新路径为动态配置的值）
+    # 1. 更新 BASE_LOGGING 中的日志路径
+    Config.BASE_LOGGING['handlers']['info_file']['filename'] = Config.LOGGING_INFO_FILE
+    Config.BASE_LOGGING['handlers']['error_file']['filename'] = Config.LOGGING_ERROR_FILE
+
+    # 2. 确保日志目录存在
+    for log_file in [Config.LOGGING_INFO_FILE, Config.LOGGING_ERROR_FILE]:
+        log_dir = os.path.dirname(log_file)
+        if log_dir and not os.path.exists(log_dir):
+            os.makedirs(log_dir, exist_ok=True)
+
+    # 3. 应用日志配置
     logging.config.dictConfig(Config.BASE_LOGGING)
+
     # 加载sanic的配置内容
     app.config.update_config(Config)
     # 配置插件扩展

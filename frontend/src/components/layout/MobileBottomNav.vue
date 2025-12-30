@@ -28,11 +28,12 @@ const navigationStore = useNavigationStore()
 
 // 图标名称映射
 const iconMap: Record<string, string> = {
-  '🏠': 'home',
+  '📝': 'pencil',
   '⚡': 'sparkles',
   '🎯': 'beaker',
   '📚': 'collection',
-  '👥': 'users'
+  '👥': 'users',
+  '🎨': 'palette'  // 绘图模块使用调色板图标
 }
 
 const getIconName = (emoji: string): string => {

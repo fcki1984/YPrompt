@@ -105,6 +105,70 @@ const iconComponents = {
       'stroke-width': '2',
       d: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z'
     })
+  ]),
+
+  palette: () => h('svg', {
+    fill: 'none',
+    stroke: 'currentColor',
+    viewBox: '0 0 24 24',
+    class: 'w-5 h-5'
+  }, [
+    h('path', {
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      'stroke-width': '2',
+      d: 'M12 4c4.97 0 9 3.358 9 7.5 0 1.933-1.567 3.5-3.5 3.5H17a2 2 0 00-2 2 3 3 0 01-3 3 8 8 0 110-16z'
+    }),
+    h('circle', {
+      cx: '9',
+      cy: '9',
+      r: '1',
+      fill: 'currentColor'
+    }),
+    h('circle', {
+      cx: '15',
+      cy: '8',
+      r: '1',
+      fill: 'currentColor'
+    }),
+    h('circle', {
+      cx: '17',
+      cy: '12',
+      r: '1',
+      fill: 'currentColor'
+    }),
+    h('circle', {
+      cx: '11',
+      cy: '13',
+      r: '1',
+      fill: 'currentColor'
+    })
+  ]),
+
+  pencil: () => h('svg', {
+    fill: 'none',
+    stroke: 'currentColor',
+    viewBox: '0 0 24 24',
+    class: 'w-5 h-5'
+  }, [
+    h('path', {
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      'stroke-width': '2',
+      d: 'M16.862 3.487l3.651 3.651-9.193 9.193-3.935.437.437-3.935 9.04-9.04z'
+    }),
+    h('path', {
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      'stroke-width': '2',
+      d: 'M13.5 6.85l3.651 3.651'
+    }),
+    h('path', {
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      'stroke-width': '2',
+      d: 'M6 20h12'
+    })
   ])
 }
 

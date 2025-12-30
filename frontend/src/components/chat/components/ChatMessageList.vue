@@ -22,6 +22,7 @@
       @edit-keydown="$emit('edit-keydown', $event)"
       @set-edit-ref="$emit('set-edit-ref', $event)"
       @set-message-ref="$emit('set-message-ref', $event)"
+      @update:editing-content="$emit('update-editing-content', { messageId: message.id!, value: $event })"
     />
     
     <div v-if="isTyping" class="flex justify-start">
@@ -59,6 +60,7 @@ defineEmits<{
   'edit-keydown': [payload: { event: KeyboardEvent, messageId: string }]
   'set-edit-ref': [payload: { messageId: string, el: HTMLTextAreaElement | null }]
   'set-message-ref': [payload: { messageId: string, el: HTMLElement | null }]
+  'update-editing-content': [payload: { messageId: string, value: string }]
 }>()
 
 const promptStore = usePromptStore()

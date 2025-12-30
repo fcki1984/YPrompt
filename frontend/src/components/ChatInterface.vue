@@ -47,6 +47,7 @@
       @edit-keydown="chatMessageOperations.handleEditKeydown"
       @set-edit-ref="(payload) => chatMessageOperations.setEditTextareaRef(payload.messageId, payload.el)"
       @set-message-ref="chatMessageOperations.setMessageRef"
+      @update-editing-content="payload => chatMessageOperations.updateEditingContent(payload.messageId, payload.value)"
     />
 
     <!-- 快速回复选项 -->

@@ -1,7 +1,7 @@
 import type { MessageAttachment } from '@/stores/promptStore'
 
 /**
- * Google Gemini 附件处理器
+ * Gemini 附件处理器
  * 负责将附件转换为 Gemini API 格式
  */
 export class GoogleAttachmentHandler {

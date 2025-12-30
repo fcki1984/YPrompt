@@ -4,12 +4,12 @@ import { GoogleAttachmentHandler } from '../multimodal/GoogleAttachmentHandler'
 import { ResponseCleaner } from '../utils/ResponseCleaner'
 
 /**
- * Google Gemini API 提供商实现
+ * Gemini API 提供商实现
  * 支持 Gemini 系列模型和多模态内容
  */
 export class GoogleProvider extends BaseProvider {
   /**
-   * 调用 Google Gemini API
+   * 调用 Gemini API
    * @param messages 聊天消息列表
    * @param stream 是否使用流式响应
    * @param params API 调用参数
@@ -17,7 +17,7 @@ export class GoogleProvider extends BaseProvider {
    */
   async callAPI(messages: ChatMessage[], stream: boolean, params?: APICallParams): Promise<AIResponse | ReadableStream<Uint8Array>> {
     
-    // Google Gemini API格式转换
+    // Gemini API格式转换
     const systemMessage = this.extractSystemMessageText(messages)
     
     const conversationMessages = messages.filter(m => m.role !== 'system')
@@ -58,7 +58,7 @@ export class GoogleProvider extends BaseProvider {
     
 
 
-    // 构建Google Gemini API URL
+    // 构建Gemini API URL
     if (!this.config.baseUrl) {
       throw new Error('API URL 未配置')
     }
@@ -103,7 +103,7 @@ export class GoogleProvider extends BaseProvider {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
-      const error = new Error(`Google Gemini API error: ${response.status} ${response.statusText}`)
+      const error = new Error(`Gemini API error: ${response.status} ${response.statusText}`)
       ;(error as any).error = errorData
       ;(error as any).status = response.status
       throw error
@@ -144,7 +144,7 @@ export class GoogleProvider extends BaseProvider {
   }
 
   /**
-   * 解析 Google Gemini 流式响应块
+   * 解析 Gemini 流式响应块
    * @param data SSE 数据字符串
    * @returns 解析后的流式块或 null
    */
