@@ -22,8 +22,8 @@ export function useDrawingProviderManagement() {
         name: 'Gemini',
         baseURL: 'https://generativelanguage.googleapis.com/v1beta',
         models: [
-          { id: 'gemini-3-pro-image-preview', name: 'gemini-3-pro-image-preview', supportsImage: true },
-          { id: 'gemini-2.5-flash-lite', name: 'gemini-2.5-flash-lite', supportsImage: false },
+          { id: 'gemini-3-pro-image-preview', name: 'gemini-3-pro-image-preview', supportsImage: true, apiType: 'google' },
+          { id: 'gemini-2.5-flash-lite', name: 'gemini-2.5-flash-lite', supportsImage: false, apiType: 'google' },
         ]
       }
     } else {

@@ -97,16 +97,17 @@
   />
 
   <!-- 模型编辑对话框 -->
-  <DrawingModelDialog
-    v-if="modelMgmt.showAddModelDialog.value"
-    :editing="!!modelMgmt.editingModel.value"
-    v-model:id="modelMgmt.newModel.value.id"
-    v-model:name="modelMgmt.newModel.value.name"
-    v-model:supports-image="modelMgmt.newModel.value.supportsImage"
-    v-model:search-keyword="modelMgmt.modelSearchKeyword.value"
-    :available-models="modelMgmt.getCurrentProviderModels.value"
-    :loading="modelMgmt.loadingModels.value"
-    :error="modelMgmt.modelFetchError.value"
+    <DrawingModelDialog
+      v-if="modelMgmt.showAddModelDialog.value"
+      :editing="!!modelMgmt.editingModel.value"
+      v-model:id="modelMgmt.newModel.value.id"
+      v-model:name="modelMgmt.newModel.value.name"
+      v-model:supports-image="modelMgmt.newModel.value.supportsImage"
+      v-model:search-keyword="modelMgmt.modelSearchKeyword.value"
+      :api-type="modelMgmt.newModel.value.apiType"
+      :available-models="modelMgmt.getCurrentProviderModels.value"
+      :loading="modelMgmt.loadingModels.value"
+      :error="modelMgmt.modelFetchError.value"
     @fetch-models="modelMgmt.fetchAvailableModels"
     @select-model="modelMgmt.selectModel"
     @save="modelMgmt.addCustomModel"

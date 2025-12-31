@@ -18,7 +18,8 @@ export function useDrawingModelManagement() {
   const newModel = ref({
     id: '',
     name: '',
-    supportsImage: true
+    supportsImage: true,
+    apiType: 'google' as 'google' | 'openai' | 'anthropic' | 'custom'
   })
 
   // 判断模型是否支持图像生成
@@ -83,7 +84,8 @@ export function useDrawingModelManagement() {
     newModel.value = {
       id: '',
       name: '',
-      supportsImage: true
+      supportsImage: true,
+      apiType: 'google'
     }
     showAddModelDialog.value = true
   }
@@ -95,7 +97,8 @@ export function useDrawingModelManagement() {
     newModel.value = {
       id: model.id,
       name: model.name,
-      supportsImage: model.supportsImage
+      supportsImage: model.supportsImage,
+      apiType: model.apiType || 'google'
     }
     showAddModelDialog.value = true
   }
@@ -109,7 +112,8 @@ export function useDrawingModelManagement() {
     newModel.value = {
       id: '',
       name: '',
-      supportsImage: true
+      supportsImage: true,
+      apiType: 'google'
     }
   }
 
@@ -175,14 +179,16 @@ export function useDrawingModelManagement() {
         drawingStore.addModel(addingModelToProvider.value, {
           id: newModel.value.id,
           name: newModel.value.name,
-          supportsImage: newModel.value.supportsImage
+          supportsImage: newModel.value.supportsImage,
+          apiType: newModel.value.apiType || 'google'
         })
       } else {
         // 添加新模型
         drawingStore.addModel(addingModelToProvider.value, {
           id: newModel.value.id,
           name: newModel.value.name,
-          supportsImage: newModel.value.supportsImage
+          supportsImage: newModel.value.supportsImage,
+          apiType: newModel.value.apiType || 'google'
         })
       }
 

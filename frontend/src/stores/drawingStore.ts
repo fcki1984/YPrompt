@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 /**
  * 批量生成的图片候选
@@ -71,6 +71,7 @@ export interface DrawingModel {
   id: string
   name: string
   supportsImage: boolean
+  apiType?: 'google' | 'openai' | 'anthropic' | 'custom'
 }
 
 /**
@@ -257,6 +258,7 @@ export const useDrawingStore = defineStore('drawing', () => {
   // 方法：添加提供商
   const addProvider = (provider: DrawingProvider) => {
     providers.value.push(provider)
+    ensureDefaultSelections()
     saveProviders()
   }
 
@@ -265,6 +267,7 @@ export const useDrawingStore = defineStore('drawing', () => {
     const index = providers.value.findIndex(p => p.id === providerId)
     if (index !== -1) {
       providers.value[index] = { ...providers.value[index], ...updates }
+      ensureDefaultSelections()
       saveProviders()
     }
   }
@@ -276,6 +279,7 @@ export const useDrawingStore = defineStore('drawing', () => {
       selectedProvider.value = ''
       selectedModel.value = ''
     }
+    ensureDefaultSelections()
     saveProviders()
   }
 
@@ -302,11 +306,47 @@ export const useDrawingStore = defineStore('drawing', () => {
     return provider.models.find(m => m.id === selectedModel.value) || null
   }
 
+  const ensureDefaultSelections = () => {
+    const availableProviders = getAvailableProviders()
+
+    if (availableProviders.length === 0) {
+      if (selectedProvider.value) {
+        selectedProvider.value = ''
+      }
+      if (selectedModel.value) {
+        selectedModel.value = ''
+      }
+      return
+    }
+
+    if (!availableProviders.some(p => p.id === selectedProvider.value)) {
+      selectedProvider.value = availableProviders[0].id
+    }
+
+    const provider = providers.value.find(p => p.id === selectedProvider.value)
+    if (!provider) {
+      selectedProvider.value = availableProviders[0].id
+      return
+    }
+
+    if (provider.models.length === 0) {
+      if (selectedModel.value) {
+        selectedModel.value = ''
+      }
+      return
+    }
+
+    if (!provider.models.some(m => m.id === selectedModel.value)) {
+      selectedModel.value = provider.models[0].id
+    }
+  }
+
   // 方法：添加模型到指定提供商
   const addModel = (providerId: string, model: DrawingModel) => {
     const provider = providers.value.find(p => p.id === providerId)
     if (provider) {
       provider.models.push(model)
+      ensureDefaultSelections()
       saveProviders()
     }
   }
@@ -319,6 +359,7 @@ export const useDrawingStore = defineStore('drawing', () => {
       if (selectedModel.value === modelId) {
         selectedModel.value = ''
       }
+      ensureDefaultSelections()
       saveProviders()
     }
   }
@@ -374,8 +415,8 @@ export const useDrawingStore = defineStore('drawing', () => {
           apiKey: '',
           baseURL: 'https://generativelanguage.googleapis.com/v1beta',
           models: [
-            { id: 'gemini-3-pro-image-preview', name: 'gemini-3-pro-image-preview', supportsImage: true },
-            { id: 'gemini-2.5-flash-lite', name: 'gemini-2.5-flash-lite', supportsImage: false }
+            { id: 'gemini-3-pro-image-preview', name: 'gemini-3-pro-image-preview', supportsImage: true, apiType: 'google' },
+            { id: 'gemini-2.5-flash-lite', name: 'gemini-2.5-flash-lite', supportsImage: false, apiType: 'google' }
           ]
         }]
         saveProviders()
@@ -393,6 +434,7 @@ export const useDrawingStore = defineStore('drawing', () => {
       // if (savedImages) {
       //   generatedImages.value = JSON.parse(savedImages)
       // }
+      ensureDefaultSelections()
     } catch (error) {
       console.error('加载绘图设置失败:', error)
     }
@@ -415,6 +457,31 @@ export const useDrawingStore = defineStore('drawing', () => {
       // saveConversation()  // 已禁用localStorage存储
     }
   }
+
+  watch(providers, () => {
+    ensureDefaultSelections()
+  }, { deep: true })
+
+  watch(selectedProvider, () => {
+    const provider = getCurrentProvider()
+    if (!provider) {
+      if (selectedModel.value) {
+        selectedModel.value = ''
+      }
+      return
+    }
+
+    if (provider.models.length === 0) {
+      if (selectedModel.value) {
+        selectedModel.value = ''
+      }
+      return
+    }
+
+    if (!provider.models.some(m => m.id === selectedModel.value)) {
+      selectedModel.value = provider.models[0].id
+    }
+  })
 
   // 初始化时加载设置
   loadSettings()

@@ -83,6 +83,20 @@
           </div>
         </div>
 
+        <!-- API 类型 -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">API 类型</label>
+          <input
+            :value="apiTypeDisplay"
+            type="text"
+            disabled
+            class="w-full px-3 py-2 border border-gray-200 rounded-md bg-gray-50 text-gray-600 cursor-not-allowed"
+          />
+          <p class="text-xs text-gray-500 mt-1">
+            绘图功能当前基于 {{ apiTypeDisplay }}，暂不支持切换其他类型
+          </p>
+        </div>
+
         <!-- 支持图像生成 -->
         <div>
           <div class="flex items-center space-x-2">
@@ -124,7 +138,9 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import { computed } from 'vue'
+
+const props = defineProps<{
   editing: boolean
   id: string
   name: string
@@ -133,6 +149,7 @@ defineProps<{
   availableModels: string[]
   loading: boolean
   error: string
+  apiType?: 'google' | 'openai' | 'anthropic' | 'custom'
 }>()
 
 defineEmits<{
@@ -145,4 +162,15 @@ defineEmits<{
   'save': []
   'close': []
 }>()
+
+const apiTypeLabels: Record<string, string> = {
+  google: 'Gemini 兼容',
+  openai: 'OpenAI',
+  anthropic: 'Anthropic Claude',
+  custom: '自定义 API'
+}
+
+const apiTypeDisplay = computed(() => {
+  return apiTypeLabels[props.apiType || 'google'] || props.apiType || '未指定'
+})
 </script>

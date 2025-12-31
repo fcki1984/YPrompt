@@ -116,6 +116,9 @@
                   <span v-if="model.supportsImage" class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">
                     支持图像
                   </span>
+                  <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
+                    {{ getApiTypeLabel(model.apiType) }}
+                  </span>
                 </div>
 
                 <div class="flex items-center space-x-1">
@@ -161,4 +164,18 @@ defineEmits<{
   'delete-model': [providerId: string, modelId: string]
   'save': []
 }>()
+
+const apiTypeLabels: Record<string, string> = {
+  google: 'Google',
+  openai: 'OpenAI',
+  anthropic: 'Anthropic',
+  custom: '自定义'
+}
+
+const getApiTypeLabel = (apiType?: string) => {
+  if (!apiType) {
+    return 'Google'
+  }
+  return apiTypeLabels[apiType] || apiType
+}
 </script>
