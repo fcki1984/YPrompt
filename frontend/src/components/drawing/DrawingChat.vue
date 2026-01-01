@@ -6,10 +6,17 @@
     @dragleave.prevent="handleGlobalDragLeave"
     @drop.prevent="handleGlobalDrop"
   >
+    <SystemPromptModal
+      :is-open="showSystemPromptModal"
+      v-model="systemPromptDraft"
+      :title="'设置系统提示词'"
+      @close="showSystemPromptModal = false"
+      @save="handleSystemPromptSave"
+    />
     <!-- Header -->
     <div class="p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
       <div class="flex items-center space-x-4">
-        <div class="text-lg font-semibold">AI 绘图对话</div>
+        <div class="text-lg font-semibold">AI对话</div>
 
         <!-- 批量生成数量控制（仅图片模型显示） -->
         <div
@@ -30,13 +37,24 @@
         </div>
       </div>
 
-      <button
-        @click="handleClearChat"
-        class="p-2 rounded-lg border border-gray-200 text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
-        title="重新开始"
-      >
-        <RefreshCw class="w-4 h-4" />
-      </button>
+      <div class="flex items-center gap-2">
+        <button
+          @click="openSystemPromptModal"
+          class="p-2 rounded-lg border transition-colors"
+          :class="hasSystemPrompt ? 'border-blue-200 bg-blue-50 text-blue-600' : 'border-gray-200 text-gray-500 hover:bg-gray-50'"
+          title="设置系统提示词"
+        >
+          <FileText class="w-4 h-4" />
+        </button>
+
+        <button
+          @click="handleClearChat"
+          class="p-2 rounded-lg border border-gray-200 text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+          title="重新开始"
+        >
+          <RefreshCw class="w-4 h-4" />
+        </button>
+      </div>
     </div>
 
     <!-- Messages -->
@@ -66,6 +84,33 @@
           class="flex flex-col w-full"
           :class="getMessageEditState(message.id).isEditing ? 'max-w-full sm:max-w-2xl' : 'max-w-xs lg:max-w-md'"
         >
+          <div
+            v-if="shouldShowThoughtSummary(message)"
+            :class="[
+              'mb-1 w-full max-w-full text-xs',
+              message.role === 'user' ? 'ml-auto' : 'mr-auto'
+            ]"
+          >
+            <button
+              class="inline-flex items-center gap-1 text-[11px] font-semibold text-gray-500 hover:text-gray-700 transition-colors"
+              @click="toggleThoughtExpanded(message.id)"
+            >
+              <Lightbulb class="w-3.5 h-3.5 text-gray-500" />
+              <span class="text-gray-600">思考过程</span>
+              <span v-if="message.thoughtDurationMs" class="text-gray-400 text-[10px]">· {{ formatThoughtDuration(message.thoughtDurationMs) }}</span>
+              <ChevronDown
+                class="w-3 h-3 text-gray-400 transition-transform duration-150"
+                :class="isThoughtExpanded(message.id) ? 'rotate-180' : ''"
+              />
+            </button>
+            <div
+              v-show="isThoughtExpanded(message.id)"
+              class="mt-1 px-4 py-3 text-sm text-gray-800 whitespace-pre-wrap leading-relaxed bg-gray-50 rounded-md"
+            >
+              {{ message.thoughtSummary }}
+            </div>
+          </div>
+
           <!-- 消息内容 -->
           <div
             :class="[
@@ -317,6 +362,20 @@
         </div>
       </div>
 
+      <!-- 流式思考过程 -->
+      <div v-if="showStreamingThoughtCard" class="flex justify-start">
+        <div class="bg-gray-50 rounded-md px-3 py-2 mr-auto max-w-xs lg:max-w-md text-xs">
+          <div class="flex items-center gap-1 text-[11px] font-semibold text-gray-500 tracking-wide mb-1">
+            <Lightbulb class="w-3.5 h-3.5 text-gray-500" />
+            <span>思考过程</span>
+            <span class="text-gray-400">生成中 · {{ formatSecondsLabel(streamingElapsedSeconds) }}</span>
+          </div>
+          <div class="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
+            {{ streamingThought }}
+          </div>
+        </div>
+      </div>
+
       <!-- 流式输出临时消息 -->
       <div v-if="streamingText" class="flex justify-start">
         <div class="bg-gray-100 text-gray-800 px-4 py-3 rounded-lg mr-auto max-w-xs lg:max-w-md">
@@ -546,12 +605,13 @@
 
 <script setup lang="ts">
 import { ref, watch, nextTick, computed, onMounted, onUnmounted } from 'vue'
-import { RefreshCw, ArrowUp, Paperclip, Upload, X, Sparkles, Send, Edit2, Trash2, Copy, Languages } from 'lucide-vue-next'
+import { RefreshCw, ArrowUp, Paperclip, Upload, X, Sparkles, Send, Edit2, Trash2, Copy, Languages, FileText, Lightbulb, ChevronDown } from 'lucide-vue-next'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import { useDrawingStore } from '@/stores/drawingStore'
 import type { DrawingMessage } from '@/stores/drawingStore'
 import { fileToBase64, getFileMimeType } from '@/services/geminiDrawingService'
+import SystemPromptModal from '@/components/modules/optimize/components/SystemPromptModal.vue'
 
 // Props
 const props = defineProps<{
@@ -611,6 +671,8 @@ const editingMessages = ref<Map<string, { isEditing: boolean; editingText: strin
 // 翻译状态
 const showTranslateMenu = ref(false)
 const isTranslating = ref(false)
+const showSystemPromptModal = ref(false)
+const systemPromptDraft = ref('')
 
 // 图片预览状态
 const imagePreview = ref<{
@@ -650,6 +712,40 @@ const placeholderText = computed(() => {
   return 'Shift+Enter 换行'
 })
 const currentModel = computed(() => drawingStore.getCurrentModel())
+const isTextModel = computed(() => !currentModel.value?.supportsImage)
+const streamingThought = computed(() => drawingStore.streamingThought)
+const showStreamingThoughtCard = computed(() => isTextModel.value && !!streamingThought.value.trim())
+const hasSystemPrompt = computed(() => !!drawingStore.systemPrompt?.trim())
+const thoughtCollapseState = ref<Map<string, boolean>>(new Map())
+const streamingElapsedSeconds = computed(() => props.elapsedTime ?? 0)
+
+const formatSecondsLabel = (seconds: number) => {
+  if (!seconds || seconds <= 0) return '<1s'
+  if (seconds < 60) return `${seconds.toFixed(1)}s`
+  return `${(seconds / 60).toFixed(1)}min`
+}
+
+const formatThoughtDuration = (ms?: number) => {
+  if (!ms || ms <= 0) return ''
+  const seconds = ms / 1000
+  return formatSecondsLabel(seconds)
+}
+
+const ensureThoughtState = (messageId: string) => {
+  if (!thoughtCollapseState.value.has(messageId)) {
+    thoughtCollapseState.value.set(messageId, false)
+  }
+}
+
+const isThoughtExpanded = (messageId: string) => {
+  ensureThoughtState(messageId)
+  return thoughtCollapseState.value.get(messageId) === true
+}
+
+const toggleThoughtExpanded = (messageId: string) => {
+  const current = isThoughtExpanded(messageId)
+  thoughtCollapseState.value.set(messageId, !current)
+}
 
 // 监听 store 的变化
 watch(
@@ -828,6 +924,7 @@ const confirmCandidateSelection = (messageId: string) => {
   ]
 
   // 保留所有候选图片到右侧图片列表
+  const generationConfigSnapshot = JSON.parse(JSON.stringify(drawingStore.generationConfig))
   message.imageCandidates.forEach((candidate, idx) => {
     if (candidate.imageData && !candidate.error) {
       drawingStore.addGeneratedImage({
@@ -836,7 +933,11 @@ const confirmCandidateSelection = (messageId: string) => {
         mimeType: candidate.mimeType!,
         prompt: candidate.prompt || candidate.text || '',  // 优先使用用户输入的提示词
         timestamp: Date.now(),
-        generationConfig: drawingStore.generationConfig
+        generationConfig: generationConfigSnapshot,
+        thoughtSummary: candidate.thoughtSummary,
+        thoughtTokens: candidate.thoughtTokens,
+        thoughtTrace: candidate.thoughtTrace ? candidate.thoughtTrace.map(item => ({ ...item })) : undefined,
+        usageMetadata: candidate.usageMetadata ? JSON.parse(JSON.stringify(candidate.usageMetadata)) : undefined
       })
     }
   })
@@ -922,6 +1023,10 @@ const resendUserMessage = (message: DrawingMessage) => {
   emit('send', text, images)
 }
 
+const shouldShowThoughtSummary = (message: DrawingMessage) => {
+  return isTextModel.value && !!message.thoughtSummary?.trim()
+}
+
 // 方法：翻译文本
 const translateText = async (targetLanguage: 'en' | 'zh') => {
   const text = inputText.value.trim()
@@ -976,7 +1081,8 @@ const translateText = async (targetLanguage: 'en' | 'zh') => {
       },
       false,  // 不需要图像生成
       undefined,  // 不需要中断信号
-      true  // 静默模式，不输出日志
+      true,  // 静默模式，不输出日志
+      undefined
     )
 
     // 提取翻译结果
@@ -1002,6 +1108,17 @@ const translateText = async (targetLanguage: 'en' | 'zh') => {
   } finally {
     isTranslating.value = false
   }
+}
+
+const openSystemPromptModal = () => {
+  systemPromptDraft.value = drawingStore.systemPrompt || ''
+  showSystemPromptModal.value = true
+}
+
+const handleSystemPromptSave = () => {
+  drawingStore.setSystemPrompt(systemPromptDraft.value.trim())
+  drawingStore.saveSettings()
+  showSystemPromptModal.value = false
 }
 
 // 方法：触发文件选择
@@ -1258,6 +1375,7 @@ const handleClearChat = () => {
     drawingStore.isGenerating = false  // 立即停止生成状态
     drawingStore.clearConversation()
     drawingStore.clearImages()
+    drawingStore.streamingThought = ''
     clearAttachments()
     inputText.value = ''
     return
@@ -1271,6 +1389,7 @@ const handleClearChat = () => {
     emit('clear')  // 通知父组件
     drawingStore.clearConversation()
     drawingStore.clearImages()
+    drawingStore.streamingThought = ''
     clearAttachments()
     inputText.value = ''
   }

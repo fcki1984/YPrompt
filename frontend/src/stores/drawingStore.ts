@@ -4,6 +4,10 @@ import { ref, watch } from 'vue'
 /**
  * 批量生成的图片候选
  */
+export type ThoughtTraceItem =
+  | { type: 'text'; text: string }
+  | { type: 'image'; mimeType: string; data: string }
+
 export interface ImageCandidate {
   id: string
   imageData?: string  // base64
@@ -13,6 +17,10 @@ export interface ImageCandidate {
   prompt?: string  // 用户输入的提示词
   isGenerating?: boolean  // 是否正在生成
   error?: string  // 生成错误信息
+  thoughtSummary?: string  // 模型思考摘要
+  thoughtTokens?: number  // 思考令牌消耗
+  thoughtTrace?: ThoughtTraceItem[]
+  usageMetadata?: UsageMetadata
 }
 
 /**
@@ -27,6 +35,8 @@ export interface DrawingMessage {
   imageCandidates?: ImageCandidate[]  // 批量生成的图片候选列表
   selectedCandidateIndex?: number  // 用户选择的候选索引（-1表示未选择）
   isAwaitingSelection?: boolean  // 是否等待用户选择
+  thoughtSummary?: string  // 模型本次回复的思考摘要
+  thoughtDurationMs?: number  // 思考用时
 }
 
 /**
@@ -39,6 +49,7 @@ export interface MessagePart {
     mimeType: string
     data: string  // base64
   }
+  isThought?: boolean  // 是否为思考内容片段
 }
 
 /**
@@ -51,6 +62,24 @@ export interface GeneratedImage {
   prompt: string
   timestamp: number
   generationConfig: any
+  thoughtSummary?: string  // 思考过程总结
+  thoughtTokens?: number  // 思考令牌使用量
+  thoughtTrace?: ThoughtTraceItem[]  // 思考过程中的内容顺序
+  usageMetadata?: UsageMetadata
+}
+
+export interface TokensDetail {
+  modality: 'TEXT' | 'IMAGE'
+  tokenCount: number
+}
+
+export interface UsageMetadata {
+  promptTokenCount?: number
+  candidatesTokenCount?: number
+  totalTokenCount?: number
+  thoughtsTokenCount?: number
+  promptTokensDetails?: TokensDetail[]
+  candidatesTokensDetails?: TokensDetail[]
 }
 
 /**
@@ -88,6 +117,15 @@ export interface FunctionDeclaration {
 /**
  * Gemini 图像生成完整配置（严格按照API文档 - Nano Banana Pro）
  */
+export interface ThinkingConfig {
+  includeThoughts: boolean
+  thinkingLevel?: 'minimal' | 'low' | 'medium' | 'high'
+  thinkingBudget?: number | null
+}
+
+/**
+ * Gemini 图像生成完整配置（严格按照API文档 - Nano Banana Pro）
+ */
 export interface ImageGenerationConfig {
   // === imageConfig ===
   aspectRatio: '1:1' | '2:3' | '3:2' | '3:4' | '4:3' | '4:5' | '5:4' | '9:16' | '16:9' | '21:9'
@@ -112,6 +150,7 @@ export interface ImageGenerationConfig {
   responseLogprobs: boolean  // 是否包含日志概率
   logprobs?: number  // [0, 20] 需启用responseLogprobs
   enableEnhancedCivicAnswers: boolean  // 增强公民诚信回答
+  thinkingConfig?: ThinkingConfig  // 模型思考配置
 
   // === 响应格式 ===
   responseModalities: Array<'TEXT' | 'IMAGE'>  // 输出模态
@@ -171,6 +210,7 @@ export const useDrawingStore = defineStore('drawing', () => {
   const generatedImages = ref<GeneratedImage[]>([])
   const isGenerating = ref(false)
   const currentStreamingText = ref('')
+  const streamingThought = ref('')
 
   // 批量生成配置
   const batchGenerationCount = ref(1)  // 每次生成图片数量（1-4）
@@ -180,6 +220,7 @@ export const useDrawingStore = defineStore('drawing', () => {
   const providers = ref<DrawingProvider[]>([])
   const selectedProvider = ref<string>('')
   const selectedModel = ref<string>('')
+  const systemPrompt = ref<string>('')
 
   // 图像生成配置（默认值严格按照API文档）
   const generationConfig = ref<ImageGenerationConfig>({
@@ -221,6 +262,13 @@ export const useDrawingStore = defineStore('drawing', () => {
     // 媒体分辨率（默认值按API文档）
     mediaResolution: 'MEDIA_RESOLUTION_UNSPECIFIED',
 
+    // 思考配置
+    thinkingConfig: {
+      includeThoughts: false,
+      thinkingLevel: 'high',
+      thinkingBudget: undefined
+    },
+
     // 安全设置（默认中等阈值）
     safetySettings: [
       { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
@@ -246,6 +294,7 @@ export const useDrawingStore = defineStore('drawing', () => {
   const clearConversation = () => {
     conversationHistory.value = []
     currentStreamingText.value = ''
+    streamingThought.value = ''
     localStorage.removeItem(DRAWING_CONVERSATION_KEY)  // 同时清空localStorage
   }
 
@@ -369,7 +418,8 @@ export const useDrawingStore = defineStore('drawing', () => {
     const settings = {
       selectedProvider: selectedProvider.value,
       selectedModel: selectedModel.value,
-      generationConfig: generationConfig.value
+      generationConfig: generationConfig.value,
+      systemPrompt: systemPrompt.value
     }
     localStorage.setItem(DRAWING_SETTINGS_KEY, JSON.stringify(settings))
   }
@@ -390,6 +440,7 @@ export const useDrawingStore = defineStore('drawing', () => {
         const settings = JSON.parse(saved)
         if (settings.selectedProvider) selectedProvider.value = settings.selectedProvider
         if (settings.selectedModel) selectedModel.value = settings.selectedModel
+        if (settings.systemPrompt) systemPrompt.value = settings.systemPrompt
         if (settings.generationConfig) {
           generationConfig.value = {
             ...generationConfig.value,
@@ -399,6 +450,14 @@ export const useDrawingStore = defineStore('drawing', () => {
           // 修复旧数据：确保 functionDeclarations 存在
           if (!generationConfig.value.functionDeclarations) {
             generationConfig.value.functionDeclarations = []
+          }
+
+          if (!generationConfig.value.thinkingConfig) {
+            generationConfig.value.thinkingConfig = {
+              includeThoughts: false,
+              thinkingLevel: 'high',
+              thinkingBudget: undefined
+            }
           }
         }
       }
@@ -492,11 +551,13 @@ export const useDrawingStore = defineStore('drawing', () => {
     generatedImages,
     isGenerating,
     currentStreamingText,
+    streamingThought,
     batchGenerationCount,
     batchGenerationProgress,
     providers,
     selectedProvider,
     selectedModel,
+    systemPrompt,
     generationConfig,
 
     // 方法
@@ -513,6 +574,7 @@ export const useDrawingStore = defineStore('drawing', () => {
     getCurrentModel,
     addModel,
     deleteModel,
+    setSystemPrompt: (prompt: string) => { systemPrompt.value = prompt },
     saveSettings,
     saveProviders,
     loadSettings,

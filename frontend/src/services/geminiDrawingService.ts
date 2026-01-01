@@ -1,4 +1,5 @@
-import type { DrawingMessage, ImageGenerationConfig, GeneratedImage } from '@/stores/drawingStore'
+import type { DrawingMessage, ImageGenerationConfig, GeneratedImage, ThoughtTraceItem } from '@/stores/drawingStore'
+import { getThinkingSupport } from '@/utils/thinkingSupport'
 
 /**
  * Gemini API 请求体
@@ -13,6 +14,7 @@ interface GeminiRequest {
         mimeType: string
         data: string
       }
+      thought?: boolean
     }>
   }>
   generationConfig?: any
@@ -37,6 +39,7 @@ interface GeminiResponse {
       parts: Array<{
         text?: string
         thoughtSignature?: string  // 图像编辑思考签名
+        thought?: boolean
         inlineData?: {
           mimeType: string
           data: string
@@ -62,6 +65,7 @@ interface GeminiResponse {
     promptTokenCount: number
     candidatesTokenCount: number
     totalTokenCount: number
+    thoughtsTokenCount?: number
   }
 }
 
@@ -86,7 +90,8 @@ export class GeminiDrawingService {
     config: ImageGenerationConfig,
     supportsImage: boolean = false,  // 标识模型是否支持图像生成
     abortSignal?: AbortSignal,  // 支持中断请求
-    silent: boolean = false  // 静默模式，不输出日志
+    silent: boolean = false,  // 静默模式，不输出日志
+    systemPrompt?: string
   ): Promise<GeminiResponse> {
     const url = `${this.baseUrl}/models/${model}:generateContent`
 
@@ -165,14 +170,22 @@ export class GeminiDrawingService {
 
     // 添加 systemInstruction（如果对话历史中有 system 消息）
     const systemMessages = conversationHistory.filter(msg => msg.role === 'system')
+    const combinedSystemParts: string[] = []
+    const trimmedCustomPrompt = systemPrompt?.trim()
+    if (trimmedCustomPrompt) {
+      combinedSystemParts.push(trimmedCustomPrompt)
+    }
     if (systemMessages.length > 0) {
       const systemText = systemMessages
         .map(msg => msg.parts.filter(p => p.text).map(p => p.text).join('\n'))
         .join('\n')
       if (systemText) {
-        requestBody.systemInstruction = {
-          parts: [{ text: systemText }]
-        }
+        combinedSystemParts.push(systemText)
+      }
+    }
+    if (combinedSystemParts.length > 0) {
+      requestBody.systemInstruction = {
+        parts: [{ text: combinedSystemParts.join('\n\n') }]
       }
     }
 
@@ -214,7 +227,7 @@ export class GeminiDrawingService {
   /**
    * 构建 GenerationConfig（严格按照API文档）
    */
-  private buildGenerationConfig(config: ImageGenerationConfig, supportsImage: boolean = false, _model?: string) {
+  private buildGenerationConfig(config: ImageGenerationConfig, supportsImage: boolean = false, modelId?: string) {
     const generationConfig: any = {}
 
     // 基础生成参数
@@ -277,19 +290,35 @@ export class GeminiDrawingService {
     }
     // 包含图像时，不设置此参数，让 API 使用默认的 application/json
 
-    // 思考配置 thinkingConfig - 暂时注释，ImageGenerationConfig中未定义这些属性
-    // if (config.thinkingIncludeThoughts || config.thinkingBudget || config.thinkingLevel !== 'THINKING_LEVEL_UNSPECIFIED') {
-    //   generationConfig.thinkingConfig = {}
-    //   if (config.thinkingIncludeThoughts) {
-    //     generationConfig.thinkingConfig.includeThoughts = true
-    //   }
-    //   if (config.thinkingBudget !== undefined && config.thinkingBudget !== null) {
-    //     generationConfig.thinkingConfig.thinkingBudget = config.thinkingBudget
-    //   }
-    //   if (config.thinkingLevel !== 'THINKING_LEVEL_UNSPECIFIED') {
-    //     generationConfig.thinkingConfig.thinkingLevel = config.thinkingLevel
-    //   }
-    // }
+    // 思考配置 thinkingConfig
+    if (config.thinkingConfig) {
+      const support = getThinkingSupport(modelId, { supportsImage })
+      const thinkingInput = config.thinkingConfig
+      if (support.supported) {
+        const thinkingConfig: Record<string, any> = {}
+        if (thinkingInput.includeThoughts) {
+          thinkingConfig.includeThoughts = true
+        }
+        if (
+          support.mode === 'level' &&
+          thinkingInput.thinkingLevel &&
+          support.levelOptions?.some(opt => opt.value === thinkingInput.thinkingLevel)
+        ) {
+          thinkingConfig.thinkingLevel = thinkingInput.thinkingLevel
+        }
+        if (
+          support.mode === 'budget' &&
+          thinkingInput.thinkingBudget !== undefined &&
+          thinkingInput.thinkingBudget !== null &&
+          !Number.isNaN(thinkingInput.thinkingBudget)
+        ) {
+          thinkingConfig.thinkingBudget = thinkingInput.thinkingBudget
+        }
+        if (Object.keys(thinkingConfig).length > 0) {
+          generationConfig.thinkingConfig = thinkingConfig
+        }
+      }
+    }
 
     // 图像配置 imageConfig（仅当模型支持图像生成时）
     if (supportsImage && (config.aspectRatio || config.imageSize)) {
@@ -322,18 +351,42 @@ export class GeminiDrawingService {
 
     response.candidates.forEach((candidate, index) => {
       if (candidate.content && candidate.content.parts) {
+        const thoughtSegments: string[] = []
+        const thoughtTrace: ThoughtTraceItem[] = []
+
         candidate.content.parts.forEach(part => {
+          if ((part as any).thought) {
+            if (part.text) {
+              const cleaned = part.text.trim()
+              if (cleaned) {
+                thoughtSegments.push(cleaned)
+                thoughtTrace.push({ type: 'text', text: cleaned })
+              }
+            } else if (part.inlineData) {
+              thoughtTrace.push({
+                type: 'image',
+                mimeType: part.inlineData.mimeType,
+                data: part.inlineData.data
+              })
+            }
+            return
+          }
+
           if (part.inlineData) {
             images.push({
               id: `${Date.now()}-${index}`,
               imageData: part.inlineData.data,
               mimeType: part.inlineData.mimeType,
-              prompt,
-              timestamp: Date.now(),
-              generationConfig: config
-            })
-          }
+          prompt,
+          timestamp: Date.now(),
+          generationConfig: JSON.parse(JSON.stringify(config)),
+          thoughtSummary: thoughtSegments.length > 0 ? thoughtSegments.join('\n\n') : undefined,
+          thoughtTokens: response.usageMetadata?.thoughtsTokenCount,
+          thoughtTrace: thoughtTrace.length > 0 ? thoughtTrace.map(item => ({ ...item })) as ThoughtTraceItem[] : undefined,
+          usageMetadata: response.usageMetadata ? JSON.parse(JSON.stringify(response.usageMetadata)) : undefined
         })
+      }
+    })
       }
     })
 
@@ -354,7 +407,7 @@ export class GeminiDrawingService {
     }
 
     return candidate.content.parts
-      .filter(part => part.text)
+      .filter(part => part.text && !(part as any).thought)
       .map(part => part.text)
       .join('')
   }
@@ -384,8 +437,9 @@ export class GeminiDrawingService {
     conversationHistory: DrawingMessage[],
     config: ImageGenerationConfig,
     supportsImage: boolean = false,
-    abortSignal?: AbortSignal  // 支持中断请求
-  ): AsyncIterable<{ text?: string; done?: boolean }> {
+    abortSignal?: AbortSignal,  // 支持中断请求
+    systemPrompt?: string
+  ): AsyncIterable<{ text?: string; thought?: string; done?: boolean }> {
     // 使用SSE格式的流式API
     const url = `${this.baseUrl}/models/${model}:streamGenerateContent?alt=sse`
 
@@ -451,14 +505,22 @@ export class GeminiDrawingService {
 
     // 添加 systemInstruction
     const systemMessages = conversationHistory.filter(msg => msg.role === 'system')
+    const combinedSystemParts: string[] = []
+    const trimmedCustomPrompt = systemPrompt?.trim()
+    if (trimmedCustomPrompt) {
+      combinedSystemParts.push(trimmedCustomPrompt)
+    }
     if (systemMessages.length > 0) {
       const systemText = systemMessages
         .map(msg => msg.parts.filter(p => p.text).map(p => p.text).join('\n'))
         .join('\n')
       if (systemText) {
-        requestBody.systemInstruction = {
-          parts: [{ text: systemText }]
-        }
+        combinedSystemParts.push(systemText)
+      }
+    }
+    if (combinedSystemParts.length > 0) {
+      requestBody.systemInstruction = {
+        parts: [{ text: combinedSystemParts.join('\n\n') }]
       }
     }
 
@@ -517,7 +579,10 @@ export class GeminiDrawingService {
                 const candidate = chunk.candidates[0]
                 if (candidate.content && candidate.content.parts) {
                   for (const part of candidate.content.parts) {
-                    // 流式文本（排除thought内容）
+                    if ((part as any).thought && part.text) {
+                      yield { thought: part.text }
+                      continue
+                    }
                     if (part.text && !(part as any).thought) {
                       yield { text: part.text }
                     }

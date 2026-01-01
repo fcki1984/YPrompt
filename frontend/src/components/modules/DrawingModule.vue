@@ -251,6 +251,7 @@ const handleSendMessage = async (
     drawingStore.isGenerating = true
     currentStreamingText.value = ''
     startTimer()
+    const systemPrompt = drawingStore.systemPrompt?.trim() || ''
 
     // 构建消息部分
     const parts: Array<{ text?: string; inlineData?: { mimeType: string; data: string } }> = []
@@ -285,10 +286,16 @@ const handleSendMessage = async (
     // 判断是否使用流式输出
     // 简化处理: 图像模型始终使用非流式,只有纯文本模型使用流式
     const useStreaming = !model.supportsImage
+    if (!useStreaming) {
+      drawingStore.streamingThought = ''
+    }
 
     if (useStreaming) {
       // 流式输出处理（仅用于纯文本模型）
       let accumulatedText = ''
+      let streamingThoughtBuffer = ''
+      drawingStore.streamingThought = ''
+      const thoughtStart = Date.now()
 
       try {
         for await (const chunk of service.generateContentStream(
@@ -296,8 +303,14 @@ const handleSendMessage = async (
           drawingStore.conversationHistory,
           drawingStore.generationConfig,
           model.supportsImage,
-          abortController.signal  // 传递 signal 用于中断
+          abortController.signal,  // 传递 signal 用于中断
+          systemPrompt || undefined
         )) {
+          if (chunk.thought) {
+            streamingThoughtBuffer += chunk.thought
+            drawingStore.streamingThought = streamingThoughtBuffer
+          }
+
           if (chunk.text) {
             accumulatedText += chunk.text
             currentStreamingText.value = accumulatedText
@@ -306,11 +319,15 @@ const handleSendMessage = async (
           if (chunk.done) {
             // 流式完成,添加完整消息到历史
             if (accumulatedText) {
+              const thoughtSummary = streamingThoughtBuffer.trim()
+              const duration = Date.now() - thoughtStart
               const modelMessage = {
                 id: `model-${Date.now()}`,
                 role: 'model' as const,
                 parts: [{ text: accumulatedText }],
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                thoughtSummary: thoughtSummary ? thoughtSummary : undefined,
+                thoughtDurationMs: duration
               }
               drawingStore.addMessage(modelMessage)
             }
@@ -321,6 +338,7 @@ const handleSendMessage = async (
         alert(`生成失败: ${streamError.message || '未知错误'}`)
       } finally {
         currentStreamingText.value = ''
+        drawingStore.streamingThought = ''
       }
     } else {
       // 非流式输出（图像生成模型）
@@ -363,7 +381,8 @@ const handleSendMessage = async (
               drawingStore.generationConfig,
               model.supportsImage,
               abortController?.signal,
-              true  // silent mode
+              true,  // silent mode
+              systemPrompt || undefined
             )
 
             // 检查是否被阻止
@@ -385,7 +404,27 @@ const handleSendMessage = async (
 
               // 提取图片和 thoughtSignature
               if (apiCandidate.content && apiCandidate.content.parts) {
+                const thoughtSegments: string[] = []
+                const thoughtTrace: Array<{ type: 'text' | 'image'; text?: string; mimeType?: string; data?: string }> = []
+
                 for (const part of apiCandidate.content.parts) {
+                  if ((part as any).thought) {
+                    if (part.text) {
+                      const cleaned = part.text.trim()
+                      if (cleaned) {
+                        thoughtSegments.push(cleaned)
+                        thoughtTrace.push({ type: 'text', text: cleaned })
+                      }
+                    } else if (part.inlineData) {
+                      thoughtTrace.push({
+                        type: 'image',
+                        mimeType: part.inlineData.mimeType,
+                        data: part.inlineData.data
+                      })
+                    }
+                    continue
+                  }
+
                   if (part.inlineData) {
                     candidate.imageData = part.inlineData.data
                     candidate.mimeType = part.inlineData.mimeType
@@ -394,6 +433,20 @@ const handleSendMessage = async (
                     candidate.thoughtSignature = part.thoughtSignature
                   }
                 }
+
+                if (thoughtSegments.length > 0) {
+                  candidate.thoughtSummary = thoughtSegments.join('\n\n')
+                }
+                if (thoughtTrace.length > 0) {
+                  candidate.thoughtTrace = thoughtTrace
+                }
+              }
+
+              if (batchResponse.usageMetadata?.thoughtsTokenCount !== undefined) {
+                candidate.thoughtTokens = batchResponse.usageMetadata.thoughtsTokenCount
+              }
+              if (batchResponse.usageMetadata) {
+                candidate.usageMetadata = JSON.parse(JSON.stringify(batchResponse.usageMetadata))
               }
             }
 
@@ -425,7 +478,9 @@ const handleSendMessage = async (
           drawingStore.conversationHistory,
           drawingStore.generationConfig,
           model.supportsImage,
-          abortController.signal  // 传递 signal 用于中断
+          abortController.signal,  // 传递 signal 用于中断
+          false,
+          systemPrompt || undefined
         )
 
         // 检查是否被阻止
@@ -444,73 +499,93 @@ const handleSendMessage = async (
         if (response.candidates && response.candidates.length > 0) {
           const candidate = response.candidates[0]
 
-        // 提取图片添加到图片库
-        const generatedImages = service.extractImages(
-          response,
-          text || '图片编辑',
-          drawingStore.generationConfig
-        )
-        generatedImages.forEach(image => {
-          drawingStore.addGeneratedImage(image)
-        })
+          // 提取图片添加到图片库
+          const generatedImages = service.extractImages(
+            response,
+            text || '图片编辑',
+            drawingStore.generationConfig
+          )
+          generatedImages.forEach(image => {
+            drawingStore.addGeneratedImage(image)
+          })
 
-        // 使用 API 返回的完整 parts（包含 thoughtSignature）
-        if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
-          // 处理parts: 将thoughtSignature合并到对应的图片part中
-          const processedParts: any[] = []
-          let pendingThoughtSignature: string | null = null
+          // 使用 API 返回的完整 parts（包含 thoughtSignature）
+          if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
+            // 处理parts: 将thoughtSignature合并到对应的图片part中
+            const processedParts: any[] = []
+            let pendingThoughtSignature: string | null = null
+            const thoughtSegments: string[] = []
+            const thoughtTrace: Array<{ type: 'text' | 'image'; text?: string; mimeType?: string; data?: string }> = []
 
-          for (const part of candidate.content.parts) {
-            // 如果是thoughtSignature,暂存它
-            if (part.thoughtSignature && !part.text && !part.inlineData) {
-              pendingThoughtSignature = part.thoughtSignature
-            }
-            // 如果是图片,并且有暂存的thoughtSignature,合并
-            else if (part.inlineData) {
-              const imagePart: any = {
-                inlineData: {
-                  mimeType: part.inlineData.mimeType,
-                  data: part.inlineData.data
+            for (const part of candidate.content.parts) {
+              if ((part as any).thought) {
+                if (part.text) {
+                  const cleaned = part.text.trim()
+                  if (cleaned) {
+                    thoughtSegments.push(cleaned)
+                    thoughtTrace.push({ type: 'text', text: cleaned })
+                  }
+                } else if (part.inlineData) {
+                  thoughtTrace.push({
+                    type: 'image',
+                    mimeType: part.inlineData.mimeType,
+                    data: part.inlineData.data
+                  })
                 }
+                continue
               }
-              // 合并thoughtSignature到图片part中
-              if (pendingThoughtSignature) {
-                imagePart.thoughtSignature = pendingThoughtSignature
-                pendingThoughtSignature = null
+
+              // 如果是thoughtSignature,暂存它
+              if (part.thoughtSignature && !part.text && !part.inlineData) {
+                pendingThoughtSignature = part.thoughtSignature
               }
-              // 或者part本身就包含thoughtSignature
-              else if (part.thoughtSignature) {
-                imagePart.thoughtSignature = part.thoughtSignature
+              // 如果是图片,并且有暂存的thoughtSignature,合并
+              else if (part.inlineData) {
+                const imagePart: any = {
+                  inlineData: {
+                    mimeType: part.inlineData.mimeType,
+                    data: part.inlineData.data
+                  }
+                }
+                // 合并thoughtSignature到图片part中
+                if (pendingThoughtSignature) {
+                  imagePart.thoughtSignature = pendingThoughtSignature
+                  pendingThoughtSignature = null
+                }
+                // 或者part本身就包含thoughtSignature
+                else if (part.thoughtSignature) {
+                  imagePart.thoughtSignature = part.thoughtSignature
+                }
+                processedParts.push(imagePart)
               }
-              processedParts.push(imagePart)
+              // 如果是文本
+              else if (part.text) {
+                const textPart: any = { text: part.text }
+                // 文本part也可能有thoughtSignature
+                if (part.thoughtSignature) {
+                  textPart.thoughtSignature = part.thoughtSignature
+                }
+                processedParts.push(textPart)
+              }
             }
-            // 如果是文本
-            else if (part.text) {
-              const textPart: any = { text: part.text }
-              // 文本part也可能有thoughtSignature
-              if (part.thoughtSignature) {
-                textPart.thoughtSignature = part.thoughtSignature
+
+            if (processedParts.length > 0) {
+              const modelMessage = {
+                id: `model-${Date.now()}`,
+                role: 'model' as const,
+                parts: processedParts,
+                timestamp: Date.now(),
+                thoughtSummary: thoughtSegments.length > 0 ? thoughtSegments.join('\n\n') : undefined
               }
-              processedParts.push(textPart)
+              drawingStore.addMessage(modelMessage)
             }
           }
 
-          if (processedParts.length > 0) {
-            const modelMessage = {
-              id: `model-${Date.now()}`,
-              role: 'model' as const,
-              parts: processedParts,
-              timestamp: Date.now()
-            }
-            drawingStore.addMessage(modelMessage)
+          // 如果没有生成图片，显示提示
+          if (generatedImages.length === 0 && !service.extractText(response)) {
+            alert('未能生成内容，请尝试调整提示词或参数')
           }
         }
-
-        // 如果没有生成图片，显示提示
-        if (generatedImages.length === 0 && !service.extractText(response)) {
-          alert('未能生成内容，请尝试调整提示词或参数')
-        }
-        }  // end if (response.candidates...)
       }  // end if (batchCount === 1)
     }  // end else (非流式输出)
 
@@ -572,16 +647,23 @@ const handleRegenerate = async () => {
     drawingStore.isGenerating = true
     currentStreamingText.value = ''
     startTimer()
+    const systemPrompt = drawingStore.systemPrompt?.trim() || ''
 
     // 创建 Gemini 服务实例
     const service = new GeminiDrawingService(provider.apiKey, provider.baseURL)
 
     // 判断是否使用流式输出
     const useStreaming = !model.supportsImage
+    if (!useStreaming) {
+      drawingStore.streamingThought = ''
+    }
 
     if (useStreaming) {
       // 流式输出处理（仅用于纯文本模型）
       let accumulatedText = ''
+      let streamingThoughtBuffer = ''
+      drawingStore.streamingThought = ''
+      const thoughtStart = Date.now()
 
       try {
         for await (const chunk of service.generateContentStream(
@@ -589,8 +671,14 @@ const handleRegenerate = async () => {
           drawingStore.conversationHistory,
           drawingStore.generationConfig,
           model.supportsImage,
-          abortController.signal
+          abortController.signal,
+          systemPrompt || undefined
         )) {
+          if (chunk.thought) {
+            streamingThoughtBuffer += chunk.thought
+            drawingStore.streamingThought = streamingThoughtBuffer
+          }
+
           if (chunk.text) {
             accumulatedText += chunk.text
             currentStreamingText.value = accumulatedText
@@ -599,11 +687,15 @@ const handleRegenerate = async () => {
           if (chunk.done) {
             // 流式完成,添加完整消息到历史
             if (accumulatedText) {
+              const thoughtSummary = streamingThoughtBuffer.trim()
+              const duration = Date.now() - thoughtStart
               const modelMessage = {
                 id: `model-${Date.now()}`,
                 role: 'model' as const,
                 parts: [{ text: accumulatedText }],
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                thoughtSummary: thoughtSummary ? thoughtSummary : undefined,
+                thoughtDurationMs: duration
               }
               drawingStore.addMessage(modelMessage)
             }
@@ -614,6 +706,7 @@ const handleRegenerate = async () => {
         alert(`生成失败: ${streamError.message || '未知错误'}`)
       } finally {
         currentStreamingText.value = ''
+        drawingStore.streamingThought = ''
       }
     } else {
       // 非流式输出（图像生成模型）
@@ -652,7 +745,8 @@ const handleRegenerate = async () => {
               drawingStore.generationConfig,
               model.supportsImage,
               abortController?.signal,
-              true
+              true,
+              systemPrompt || undefined
             )
 
             if (service.isBlocked(batchResponse)) {
@@ -706,7 +800,9 @@ const handleRegenerate = async () => {
           drawingStore.conversationHistory,
           drawingStore.generationConfig,
           model.supportsImage,
-          abortController.signal
+          abortController.signal,
+          false,
+          systemPrompt || undefined
         )
 
         if (service.isBlocked(response)) {

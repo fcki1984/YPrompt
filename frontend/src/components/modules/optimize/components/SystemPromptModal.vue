@@ -17,13 +17,16 @@
 
       <!-- 内容 -->
       <div class="flex-1 overflow-y-auto p-4">
-        <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
-          设置系统提示词可以帮助AI更好地理解对话上下文，提供更准确的响应。
-        </p>
+        <div class="mb-3 space-y-2 text-sm text-gray-600 dark:text-gray-400">
+          <p>设置系统提示词可以帮助AI更好地理解对话上下文，提供更准确的响应。</p>
+          <p class="text-xs text-amber-600 dark:text-amber-400 leading-5">
+            * 若用于绘图模型，请在提示词中明确要求“输出内容必须包含图片/图像”，避免模型只返回纯文本。
+          </p>
+        </div>
         <textarea
           :value="modelValue"
           @input="$emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
-          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-0 focus:border-gray-300 dark:focus:border-gray-600 focus:shadow-none resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           rows="8"
           placeholder="例如：你是一个专业的编程助手，擅长解决代码问题和提供技术建议。"
         />

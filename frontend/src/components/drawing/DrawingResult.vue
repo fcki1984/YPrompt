@@ -186,8 +186,8 @@
               <!-- 响应格式 -->
               <div class="space-y-1">
                 <div class="text-gray-600 font-medium">响应格式:</div>
-                <div class="bg-gray-100 rounded p-2 space-y-1">
-                  <div class="flex justify-between">
+              <div class="bg-gray-100 rounded p-2 space-y-1">
+                  <div class="flex justify-between" v-if="image.generationConfig.responseModalities">
                     <span class="text-gray-600">模态:</span>
                     <span class="text-gray-900">{{ image.generationConfig.responseModalities.join(', ') }}</span>
                   </div>
@@ -200,6 +200,86 @@
                     <span class="text-gray-900">{{ image.generationConfig.mediaResolution }}</span>
                   </div>
                 </div>
+              </div>
+
+              <!-- 思考配置 -->
+              <div
+                v-if="image.generationConfig.thinkingConfig || image.thoughtSummary || image.usageMetadata"
+                class="space-y-1"
+              >
+                <div class="text-gray-600 font-medium">思考 / Token 概览:</div>
+                <div class="bg-gray-100 rounded p-2 space-y-1">
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">返回思考总结:</span>
+                    <span class="text-gray-900">
+                      {{ image.generationConfig.thinkingConfig?.includeThoughts ? '已启用' : '关闭' }}
+                    </span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">思考深度:</span>
+                    <span class="text-gray-900">
+                      {{ formatThinkingLevel(image.generationConfig.thinkingConfig?.thinkingLevel) }}
+                    </span>
+                  </div>
+                  <div
+                    v-if="image.generationConfig.thinkingConfig?.thinkingBudget !== undefined && image.generationConfig.thinkingConfig?.thinkingBudget !== null && image.generationConfig.thinkingConfig?.thinkingBudget !== ''"
+                    class="flex justify-between"
+                  >
+                    <span class="text-gray-600">令牌预算:</span>
+                    <span class="text-gray-900">{{ image.generationConfig.thinkingConfig?.thinkingBudget }}</span>
+                  </div>
+                  <div v-if="image.thoughtTokens !== undefined" class="flex justify-between">
+                    <span class="text-gray-600">思考Token消耗:</span>
+                    <span class="text-gray-900">{{ image.thoughtTokens }}</span>
+                  </div>
+                  <div v-if="image.usageMetadata?.totalTokenCount" class="flex justify-between border-t border-gray-200 pt-1 mt-1">
+                    <span class="text-gray-600">总 Token:</span>
+                    <span class="text-gray-900">{{ image.usageMetadata.totalTokenCount }}</span>
+                  </div>
+                  <div v-if="image.usageMetadata?.promptTokenCount" class="flex justify-between">
+                    <span class="text-gray-600">Prompt Token:</span>
+                    <span class="text-gray-900">{{ image.usageMetadata.promptTokenCount }}</span>
+                  </div>
+                  <div v-if="image.usageMetadata?.candidatesTokenCount" class="flex justify-between">
+                    <span class="text-gray-600">输出 Token:</span>
+                    <span class="text-gray-900">{{ image.usageMetadata.candidatesTokenCount }}</span>
+                  </div>
+
+                  <div
+                    v-if="image.usageMetadata && (image.usageMetadata.promptTokensDetails?.length || image.usageMetadata.candidatesTokensDetails?.length)"
+                    class="mt-2 rounded bg-white border border-gray-200 p-2 text-xs text-gray-600 space-y-2"
+                  >
+                    <div v-if="image.usageMetadata.promptTokensDetails?.length">
+                      <div class="font-medium text-gray-700 mb-1">Prompt 细分 (按模态):</div>
+                      <div
+                        v-for="(detail, idx) in image.usageMetadata.promptTokensDetails"
+                        :key="'prompt-'+idx"
+                        class="flex justify-between"
+                      >
+                        <span>{{ formatModality(detail.modality) }}</span>
+                        <span>{{ detail.tokenCount }}</span>
+                      </div>
+                    </div>
+                    <div v-if="image.usageMetadata.candidatesTokensDetails?.length">
+                      <div class="font-medium text-gray-700 mb-1">输出细分 (按模态):</div>
+                      <div
+                        v-for="(detail, idx) in image.usageMetadata.candidatesTokensDetails"
+                        :key="'cand-'+idx"
+                        class="flex justify-between"
+                      >
+                        <span>{{ formatModality(detail.modality) }}</span>
+                        <span>{{ detail.tokenCount }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  v-if="image.thoughtTrace && image.thoughtTrace.length > 0"
+                  @click="openThoughtViewer(image)"
+                  class="w-full px-3 py-2 text-xs text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 rounded transition-colors"
+                >
+                  查看思考过程
+                </button>
               </div>
 
               <!-- 工具配置 -->
@@ -284,6 +364,73 @@
         <X class="w-6 h-6" />
       </button>
     </div>
+
+    <!-- 思考过程查看模态框 -->
+    <div
+      v-if="thoughtViewer.show"
+      class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4"
+      @click="closeThoughtViewer"
+    >
+      <div
+        class="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[80vh] flex flex-col"
+        @click.stop
+      >
+        <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
+          <div>
+            <h4 class="text-lg font-semibold text-gray-900">模型思考过程</h4>
+            <p class="text-xs text-gray-500 mt-1">
+              {{ thoughtViewer.prompt }}
+              <span v-if="thoughtViewer.tokens !== undefined" class="ml-2 text-gray-400">
+                (思考令牌: {{ thoughtViewer.tokens }})
+              </span>
+            </p>
+          </div>
+          <button
+            class="p-2 rounded-full hover:bg-gray-100"
+            @click="closeThoughtViewer"
+          >
+            <X class="w-5 h-5 text-gray-600" />
+          </button>
+        </div>
+        <div class="p-5 overflow-y-auto space-y-4 text-sm text-gray-800 leading-relaxed">
+          <template v-if="thoughtViewer.trace && thoughtViewer.trace.length > 0">
+            <div
+              v-for="(item, idx) in thoughtViewer.trace"
+              :key="idx"
+              class="space-y-2"
+            >
+              <p
+                v-if="item.type === 'text'"
+                class="whitespace-pre-line bg-gray-50 rounded-lg px-3 py-2"
+              >
+                {{ item.text }}
+              </p>
+              <div
+                v-else
+                class="rounded-lg overflow-hidden border border-gray-200 bg-gray-50"
+              >
+                <img
+                  :src="`data:${item.mimeType};base64,${item.data}`"
+                  alt="思考过程图像"
+                  class="w-full object-cover"
+                />
+              </div>
+            </div>
+          </template>
+          <div v-else class="text-center text-gray-400">
+            暂无思考内容
+          </div>
+        </div>
+        <div class="px-5 py-3 border-t border-gray-200 text-right">
+          <button
+            @click="closeThoughtViewer"
+            class="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700"
+          >
+            关闭
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -291,7 +438,7 @@
 import { ref, watch } from 'vue'
 import { Download, Trash2, ChevronDown, X, ImageIcon } from 'lucide-vue-next'
 import { useDrawingStore } from '@/stores/drawingStore'
-import type { GeneratedImage } from '@/stores/drawingStore'
+import type { GeneratedImage, ThoughtTraceItem } from '@/stores/drawingStore'
 
 const drawingStore = useDrawingStore()
 
@@ -299,6 +446,12 @@ const drawingStore = useDrawingStore()
 const images = ref<GeneratedImage[]>([])
 const expandedDetails = ref<string[]>([])
 const previewImage = ref<GeneratedImage | null>(null)
+const thoughtViewer = ref<{ show: boolean; prompt: string; tokens?: number | undefined; trace?: ThoughtTraceItem[] }>({
+  show: false,
+  prompt: '',
+  tokens: undefined,
+  trace: undefined
+})
 
 // 监听 store 的变化
 watch(
@@ -379,6 +532,19 @@ const formatSafetyThreshold = (threshold: string): string => {
   return thresholdMap[threshold] || threshold
 }
 
+const formatThinkingLevel = (level?: string): string => {
+  const levelMap: Record<string, string> = {
+    high: '高 (high)',
+    medium: '中 (medium)',
+    low: '低 (low)',
+    minimal: '极简 (minimal)'
+  }
+  if (!level) {
+    return '模型默认'
+  }
+  return levelMap[level] || level
+}
+
 // 方法：切换详情展开
 const toggleDetails = (imageId: string) => {
   const index = expandedDetails.value.indexOf(imageId)
@@ -420,6 +586,33 @@ const openImagePreview = (image: GeneratedImage) => {
 // 方法：关闭图片预览
 const closeImagePreview = () => {
   previewImage.value = null
+}
+
+// 方法：打开思考查看器
+const openThoughtViewer = (image: GeneratedImage) => {
+  if (!image.thoughtTrace || image.thoughtTrace.length === 0) return
+  thoughtViewer.value = {
+    show: true,
+    prompt: image.prompt,
+    tokens: image.thoughtTokens,
+    trace: image.thoughtTrace
+  }
+}
+
+const closeThoughtViewer = () => {
+  thoughtViewer.value = {
+    show: false,
+    prompt: '',
+    tokens: undefined,
+    trace: undefined
+  }
+}
+
+const formatModality = (modality?: string) => {
+  if (!modality) return 'N/A'
+  if (modality === 'TEXT') return '文本'
+  if (modality === 'IMAGE') return '图像'
+  return modality
 }
 </script>
 

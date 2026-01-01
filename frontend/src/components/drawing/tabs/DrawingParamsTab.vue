@@ -15,6 +15,8 @@
           </span>
         </div>
       </div>
+
+      
     </div>
 
     <!-- 无模型选中提示 -->
@@ -103,19 +105,6 @@
           <p class="text-xs text-gray-500 mt-2">
             注意：2K和4K仅 gemini-3-pro-image-preview 支持，其他模型只支持1K
           </p>
-        </div>
-      </div>
-
-      <!-- 非图像模型提示 -->
-      <div v-if="!currentModel.supportsImage" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div class="flex items-start space-x-3">
-          <Info class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-          <div class="flex-1">
-            <h3 class="text-sm font-medium text-blue-900 mb-1">文本生成模型参数</h3>
-            <p class="text-sm text-blue-700">
-              当前选择的是文本生成模型，以下参数用于控制文本生成的质量和行为
-            </p>
-          </div>
         </div>
       </div>
 
@@ -287,6 +276,89 @@
             </p>
           </div>
 
+        </div>
+      </div>
+
+      <!-- 思考参数 -->
+      <div class="border-b pb-6">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-medium text-gray-800">思考参数 (thinkingConfig)</h4>
+          <span v-if="thinkingSupport.note" class="text-xs text-gray-500">{{ thinkingSupport.note }}</span>
+        </div>
+        <p class="text-xs text-gray-500 mb-3">
+          自动根据模型系列切换 <code>thinkingLevel</code> 与 <code>thinkingBudget</code>。Gemini 3 系列使用思考等级，Gemini 2.5/2.0 系列使用思考令牌预算。
+        </p>
+
+        <div v-if="!thinkingSupport.supported" class="p-3 bg-gray-50 rounded-lg text-sm text-gray-500">
+          当前模型不支持思考配置或仅提供专用能力（如纯图像/TTS），因此不会向 API 发送思考参数。
+        </div>
+
+        <div v-else class="space-y-4">
+          <div class="space-y-2">
+            <label
+              class="flex items-center space-x-2 cursor-pointer"
+              :class="{ 'opacity-60': !thinkingSupport.includeThoughts }"
+            >
+              <input
+                type="checkbox"
+                v-model="config.thinkingConfig!.includeThoughts"
+                @change="saveConfig"
+                class="rounded"
+                :disabled="!thinkingSupport.includeThoughts"
+              />
+              <span class="text-sm font-medium text-gray-700">
+                includeThoughts (返回思考总结)
+              </span>
+            </label>
+            <p class="text-xs text-gray-500">
+              启用后，模型会附带一段经过脱敏的思考总结（thought part），可在生成结果面板的「查看思考过程」中查看。
+            </p>
+          </div>
+
+          <template v-if="thinkingSupport.mode === 'level' && thinkingSupport.levelOptions">
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-700">
+                thinkingLevel (思考深度)
+              </label>
+              <select
+                v-model="config.thinkingConfig!.thinkingLevel"
+                @change="saveConfig"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+              >
+                <option
+                  v-for="option in thinkingSupport.levelOptions"
+                  :key="option.value"
+                  :value="option.value"
+                >
+                  {{ option.label }}
+                </option>
+              </select>
+              <p class="text-xs text-gray-500">
+                Gemini 3 Pro 支持 low/high，两者在延迟与推理深度之间权衡；Gemini 3 Flash 支持 minimal/low/medium/high。
+              </p>
+            </div>
+          </template>
+
+          <template v-else-if="thinkingSupport.mode === 'budget' && thinkingSupport.budgetRange">
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-700">
+                thinkingBudget (思考令牌预算)
+              </label>
+              <input
+                type="number"
+                :min="thinkingSupport.budgetRange.min"
+                :max="thinkingSupport.budgetRange.max"
+                :step="thinkingSupport.budgetRange.step || 1"
+                :value="config.thinkingConfig!.thinkingBudget ?? ''"
+                @change="handleBudgetChange"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                :placeholder="thinkingSupport.budgetRange.description"
+              />
+              <p class="text-xs text-gray-500">
+                {{ thinkingSupport.budgetRange.description || '设置思考令牌范围，-1 代表动态思考。' }}
+              </p>
+            </div>
+          </template>
         </div>
       </div>
 
@@ -805,10 +877,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Info } from 'lucide-vue-next'
+import { ref, computed, watch } from 'vue'
 import { useDrawingStore } from '@/stores/drawingStore'
 import { useNotificationStore } from '@/stores/notificationStore'
+import { getThinkingSupport } from '@/utils/thinkingSupport'
 
 const drawingStore = useDrawingStore()
 const notificationStore = useNotificationStore()
@@ -816,6 +888,89 @@ const config = computed(() => drawingStore.generationConfig)
 const currentProvider = computed(() => drawingStore.getCurrentProvider())
 const currentModel = computed(() => drawingStore.getCurrentModel())
 const showHelp = ref(false)
+const saveConfig = () => {
+  drawingStore.saveSettings()
+}
+const thinkingSupport = computed(() => getThinkingSupport(
+  currentModel.value?.id,
+  { supportsImage: currentModel.value?.supportsImage }
+))
+
+if (!config.value.thinkingConfig) {
+  config.value.thinkingConfig = {
+    includeThoughts: false,
+    thinkingLevel: undefined,
+    thinkingBudget: undefined
+  }
+}
+
+const normalizeBudget = (
+  value: number | null | undefined,
+  range: NonNullable<(typeof thinkingSupport.value)['budgetRange']>
+) => {
+  if (value === null || value === undefined || Number.isNaN(value)) {
+    return range.default ?? (range.allowDynamic ? -1 : range.min)
+  }
+
+  if (range.allowDynamic && value === -1) {
+    return -1
+  }
+
+  let result = value
+  if (!range.allowZero && result === 0) {
+    result = range.min
+  }
+  if (result < range.min && !(range.allowZero && result === 0)) {
+    result = range.min
+  }
+  if (result > range.max) {
+    result = range.max
+  }
+  return result
+}
+
+const ensureThinkingDefaults = (info = thinkingSupport.value) => {
+  if (!config.value.thinkingConfig) {
+    config.value.thinkingConfig = { includeThoughts: false }
+  }
+  const tc = config.value.thinkingConfig
+
+  if (!info.supported) {
+    tc.includeThoughts = false
+    delete tc.thinkingLevel
+    delete tc.thinkingBudget
+    return
+  }
+
+  if (info.mode === 'level') {
+    delete tc.thinkingBudget
+    const options = info.levelOptions || []
+    if (!options.find(opt => opt.value === tc.thinkingLevel)) {
+      tc.thinkingLevel = options[0]?.value || 'high'
+    }
+  } else if (info.mode === 'budget' && info.budgetRange) {
+    delete tc.thinkingLevel
+    const normalized = normalizeBudget(tc.thinkingBudget, info.budgetRange)
+    tc.thinkingBudget = normalized
+  }
+}
+
+watch(thinkingSupport, (info) => {
+  ensureThinkingDefaults(info)
+  saveConfig()
+}, { immediate: true })
+
+const handleBudgetChange = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  const raw = input.value.trim()
+  const number = raw === '' ? undefined : Number(raw)
+  const range = thinkingSupport.value.budgetRange
+  if (!range) return
+  const normalized = normalizeBudget(number, range)
+  config.value.thinkingConfig!.thinkingBudget = normalized
+  input.value = String(normalized)
+  saveConfig()
+}
 
 // responseSchema处理
 const responseSchemaJson = ref('')
@@ -869,10 +1024,6 @@ const imageSizes = [
   { value: '2K' as const, resolution: '2048×2048' },
   { value: '4K' as const, resolution: '4096×4096' }
 ]
-
-const saveConfig = () => {
-  drawingStore.saveSettings()
-}
 
 // 切换输出模态
 const toggleModality = (modality: 'TEXT' | 'IMAGE', checked: boolean) => {
@@ -940,6 +1091,12 @@ const handleReset = () => {
     enableEnhancedCivicAnswers: false,
     responseLogprobs: false,
     logprobs: 0,
+
+    thinkingConfig: {
+      includeThoughts: false,
+      thinkingLevel: 'high',
+      thinkingBudget: undefined
+    },
 
     // 安全设置（默认4个常用类别）
     safetySettings: [
