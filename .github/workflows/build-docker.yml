@@ -73,13 +73,18 @@ jobs:
         cp Dockerfile build-context/
         cp start.sh build-context/
         chmod +x build-context/start.sh
-        
+
         # 显示构建摘要
         if [ "${{ steps.check_builtin.outputs.found }}" == "true" ]; then
           echo "📦 构建包含内置AI提供商配置"
         else
           echo "📦 构建不包含内置AI提供商配置"
         fi
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+      with:
+        platforms: linux/amd64,linux/arm64
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -90,7 +95,7 @@ jobs:
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
-        password: ${{ secrets.DOCKER }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Extract metadata
       id: meta
